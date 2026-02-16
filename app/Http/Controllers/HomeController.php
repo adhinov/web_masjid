@@ -22,20 +22,35 @@ class HomeController extends Controller
         $today = Carbon::now()->format('d-m-Y');
 
         // Cache per hari (86400 detik = 1 hari)
-        $response = Cache::remember('jadwal_sholat_' . $today, 86400, function () use ($latitude, $longitude, $method, $today) {
+        try {
+            $response = Cache::remember('jadwal_sholat_' . $today, 86400, function () use ($latitude, $longitude, $method, $today) {
+                $api = Http::timeout(10)->get("https://api.aladhan.com/v1/timings/{$today}", [
+                    'latitude'  => $latitude,
+                    'longitude' => $longitude,
+                    'method'    => $method,
+                    'timezone'  => 'Asia/Jakarta'
+                ]);
 
-            $api = Http::get("https://api.aladhan.com/v1/timings/{$today}", [
-                'latitude'  => $latitude,
-                'longitude' => $longitude,
-                'method'    => $method,
-                'timezone'  => 'Asia/Jakarta'
-            ]);
+                return $api->ok() ? $api->json() : null;
+            });
+        } catch (\Throwable $e) {
+            $response = null;
+        }
 
-            return $api->json();
-        });
+        if (!is_array($response) || !isset($response['data']['timings'])) {
+            $jadwal = [
+                'Imsak' => '--:--',
+                'Subuh' => '--:--',
+                'Dzuhur' => '--:--',
+                'Ashar' => '--:--',
+                'Maghrib' => '--:--',
+                'Isya' => '--:--',
+            ];
 
-        // Ambil data waktu sholat
-        $timings = $response['data']['timings'];
+            $tanggalHijriyah = 'Tanggal Hijriyah tidak tersedia';
+
+            return view('frontend.home', compact('jadwal', 'tanggalHijriyah'));
+        }
 
         // Filter hanya 6 waktu utama
         $jadwal = [
