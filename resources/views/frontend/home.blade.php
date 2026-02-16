@@ -29,7 +29,7 @@
                     </p>
 
                     <!-- Tanggal Hijriyah -->
-                    <p class="text-muted mb-3 hero-date">
+                    <p id="hijri-date" class="text-muted mb-3 hero-date">
                         {{ $tanggalHijriyah }}
                     </p>
 
@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cards = document.querySelectorAll(".waktu-card");
     const countdownEl = document.getElementById("countdown");
+    const hijriEl = document.getElementById("hijri-date");
 
     if (!cards.length || !countdownEl) return;
 
@@ -164,9 +165,65 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function formatDateForApi(date) {
+        const dd = String(date.getDate()).padStart(2, "0");
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const yyyy = date.getFullYear();
+        return `${dd}-${mm}-${yyyy}`;
+    }
+
+    function setTimesFromApi(timings) {
+        const mapping = {
+            Imsak: "Imsak",
+            Subuh: "Fajr",
+            Dzuhur: "Dhuhr",
+            Ashar: "Asr",
+            Maghrib: "Maghrib",
+            Isya: "Isha",
+        };
+
+        cards.forEach(card => {
+            const label = card.querySelector("strong")?.innerText.trim();
+            const key = mapping[label];
+            if (!key || !timings[key]) return;
+
+            const time = timings[key].substring(0, 5);
+            card.dataset.time = time;
+            const timeEl = card.querySelector(".prayer-time");
+            if (timeEl) timeEl.innerText = time;
+        });
+    }
+
+    async function fetchPrayerTimesClient() {
+        try {
+            const date = new Date();
+            const formatted = formatDateForApi(date);
+            const url = `https://api.aladhan.com/v1/timings/${formatted}?latitude=-6.450593&longitude=107.038322&method=11&timezone=Asia/Jakarta`;
+            const res = await fetch(url, { headers: { "Accept": "application/json" } });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (!data?.data?.timings) return;
+
+            setTimesFromApi(data.data.timings);
+
+            if (hijriEl && data?.data?.date?.hijri) {
+                const h = data.data.date.hijri;
+                hijriEl.innerText = `${h.day} ${h.month.en} ${h.year} H`;
+            }
+
+            updateCountdown();
+        } catch (e) {
+            // silent fallback
+        }
+    }
+
     // 🔥 INI YANG PENTING
     updateCountdown();              // panggil pertama kali
     setInterval(updateCountdown, 1000);
+
+    if (!getNextPrayer().nextPrayer) {
+        fetchPrayerTimesClient();
+    }
 
 });
 </script>
