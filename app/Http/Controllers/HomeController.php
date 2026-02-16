@@ -24,14 +24,39 @@ class HomeController extends Controller
         // Cache per hari (86400 detik = 1 hari)
         try {
             $response = Cache::remember('jadwal_sholat_' . $today, 86400, function () use ($latitude, $longitude, $method, $today) {
-                $api = Http::timeout(10)->get("https://api.aladhan.com/v1/timings/{$today}", [
+                $url = "https://api.aladhan.com/v1/timings/{$today}";
+
+                // Primary: Laravel HTTP client
+                $api = Http::timeout(10)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get($url, [
+                        'latitude'  => $latitude,
+                        'longitude' => $longitude,
+                        'method'    => $method,
+                        'timezone'  => 'Asia/Jakarta'
+                    ]);
+
+                if ($api->ok()) {
+                    return $api->json();
+                }
+
+                // Fallback: file_get_contents (in case HTTP client fails on server)
+                $query = http_build_query([
                     'latitude'  => $latitude,
                     'longitude' => $longitude,
                     'method'    => $method,
                     'timezone'  => 'Asia/Jakarta'
                 ]);
+                $context = stream_context_create([
+                    'http' => [
+                        'timeout' => 10,
+                        'header'  => "User-Agent: Mozilla/5.0\r\nAccept: application/json\r\n"
+                    ]
+                ]);
+                $raw = @file_get_contents($url . '?' . $query, false, $context);
 
-                return $api->ok() ? $api->json() : null;
+                return $raw ? json_decode($raw, true) : null;
             });
         } catch (\Throwable $e) {
             $response = null;
