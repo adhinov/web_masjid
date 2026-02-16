@@ -87,6 +87,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!cards.length || !countdownEl) return;
 
+    function isValidTime(value) {
+        return /^\d{2}:\d{2}$/.test(value);
+    }
+
     function getNextPrayer() {
         const now = new Date();
         let nextPrayer = null;
@@ -94,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         cards.forEach(card => {
             const time = card.dataset.time;
-            if (!time) return;
+            if (!time || !isValidTime(time)) return;
 
             const [hours, minutes] = time.split(":");
             const prayerTime = new Date();
@@ -107,8 +111,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         // Kalau semua sudah lewat → ke waktu pertama besok
-        if (!nextPrayer && cards.length > 0) {
-            const firstCard = cards[0];
+        if (!nextPrayer) {
+            const firstCard = Array.from(cards).find(card => isValidTime(card.dataset.time));
+            if (!firstCard) return { nextPrayer: null, nextName: "" };
             const time = firstCard.dataset.time;
             const [hours, minutes] = time.split(":");
 
@@ -124,7 +129,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateCountdown() {
         const { nextPrayer, nextName } = getNextPrayer();
-        if (!nextPrayer) return;
+        if (!nextPrayer) {
+            countdownEl.innerHTML = "Jadwal sholat belum tersedia";
+            return;
+        }
 
         const now = new Date();
         const diff = nextPrayer - now;
