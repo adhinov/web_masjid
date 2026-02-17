@@ -40,7 +40,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-text" href="#kontak">Kontak</a>
+                    <a class="nav-link menu-text" href="/admin/login">Admin</a>
                 </li>
 
                 @auth
