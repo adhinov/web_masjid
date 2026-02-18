@@ -43,15 +43,6 @@
                     <a class="nav-link menu-text" href="/admin/login">Admin</a>
                 </li>
 
-                @auth
-                <li class="nav-item">
-                    <a class="nav-link menu-text fw-semibold text-warning"
-                       href="/admin/dashboard">
-                        Dashboard
-                    </a>
-                </li>
-                @endauth
-
             </ul>
         </div>
 
