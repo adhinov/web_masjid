@@ -1,4 +1,4 @@
-<footer class="bg-masjid text-white mt-3">
+<footer class="bg-masjid text-white">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <div class="container py-4 text-center footer-wrapper">
 

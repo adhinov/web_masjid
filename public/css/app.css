@@ -17,6 +17,7 @@ body {
 
 html,
 body {
+    height: 100%;
     overflow-x: hidden;
 }
 
@@ -80,6 +81,13 @@ h4 {
 
 body {
     padding-top: 64px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 .navbar-brand {
@@ -238,6 +246,7 @@ body {
 
 footer {
     font-size: 0.85rem;
+    margin-top: auto;
 }
 
 .footer-title {
