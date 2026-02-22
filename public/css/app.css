@@ -290,7 +290,7 @@ footer {
     background: #0b2f6b;
     color: #fff;
     border-radius: 999px;
-    padding: 12px 16px;
+    padding: 14px 18px;
     font-weight: 600;
 }
 
@@ -354,6 +354,10 @@ footer {
     .btn {
         font-size: 0.85rem !important;
         padding: 7px 14px !important;
+    }
+
+    .btn-admin {
+        padding: 16px 18px !important;
     }
 
     .navbar-brand {
