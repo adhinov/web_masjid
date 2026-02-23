@@ -91,7 +91,7 @@ main {
 }
 
 .navbar-brand {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 600;
 }
 
@@ -365,7 +365,7 @@ footer {
     }
 
     .navbar-brand {
-        font-size: 0.8rem !important;
+        font-size: 0.9rem !important;
         line-height: 1.2;
     }
 
