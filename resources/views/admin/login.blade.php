@@ -2,6 +2,8 @@
 
 @section('title', 'Admin Login')
 
+@section('body-class', 'admin-login-page')
+
 @section('content')
 <div class="container my-4">
     <div class="row justify-content-center">

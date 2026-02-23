@@ -90,6 +90,41 @@ main {
     flex: 1;
 }
 
+/* ===============================
+   ADMIN LOGIN FULL SCREEN FIT
+================================= */
+
+.admin-login-page main {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.admin-login-page .container.my-4 {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+.admin-login-page .card-body {
+    padding: 20px !important;
+}
+
+.admin-login-page footer .footer-wrapper {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.admin-login-page .footer-title {
+    font-size: 0.95rem;
+}
+
+.admin-login-page .footer-text {
+    font-size: 0.8rem;
+}
+
+.admin-login-page .footer-copy {
+    font-size: 0.75rem;
+}
+
 .navbar-brand {
     font-size: 1.15rem;
     font-weight: 600;
