@@ -119,6 +119,10 @@ main {
     color: #777;
 }
 
+.hero-date-blue {
+    color: #0b2f6b;
+}
+
 .hero-logo {
     max-height: 180px;
 }
@@ -361,8 +365,12 @@ footer {
     }
 
     .navbar-brand {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
         line-height: 1.2;
+    }
+
+    .brand-title {
+        white-space: nowrap;
     }
 
     .navbar .nav-link {

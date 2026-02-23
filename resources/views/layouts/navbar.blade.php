@@ -6,8 +6,7 @@
             <span class="brand-icon">🕌</span>
 
             <span class="brand-title">
-                <span class="d-block d-md-inline">Masjid Jami'</span>
-                <span class="d-block d-md-inline">Abi Musa Al Asy'ari</span>
+                <span class="d-inline">Masjid Jami' Abi Musa Al Asy'ari</span>
             </span>
         </a>
 

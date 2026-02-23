@@ -21,7 +21,7 @@
                 <!-- Text Content -->
                 <div class="col-md-8">
                     <h2 class="text-masjid fw-semibold mb-3 hero-title">
-                        Selamat Datang di Website Masjid
+                        Informasi Masjid Digital
                     </h2>
 
                     <p class="mb-2 hero-subtitle">
@@ -29,7 +29,7 @@
                     </p>
 
                     <!-- Tanggal Hijriyah -->
-                    <p id="hijri-date" class="text-muted mb-3 hero-date">
+                    <p id="hijri-date" class="text-muted mb-3 hero-date hero-date-blue">
                         {{ $tanggalHijriyah }}
                     </p>
 
