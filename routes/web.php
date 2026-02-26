@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminAuthController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::view('/beranda', 'frontend.beranda');
+Route::get('/jadwal-sholat', [HomeController::class, 'hijriCalendar'])->name('hijri.calendar');
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');

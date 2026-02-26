@@ -301,6 +301,67 @@ footer {
 }
 
 /* ===============================
+   HIJRI CALENDAR
+================================= */
+
+.hijri-calendar {
+    background: #f8fafb;
+    border-radius: 12px;
+    border: 1px solid #e5ebf1;
+    padding: 10px;
+}
+
+.calendar-header,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.calendar-header {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #0b2f6b;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.calendar-cell {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #edf1f6;
+    min-height: 64px;
+}
+
+.calendar-cell.is-empty {
+    background: transparent;
+    border: none;
+}
+
+.calendar-cell.is-today {
+    border-color: #1e7e34;
+    box-shadow: 0 0 0 2px rgba(30, 126, 52, 0.12);
+}
+
+.greg-day {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+.hijri-day {
+    margin-top: 4px;
+    font-size: 0.95rem;
+    color: #1e7e34;
+}
+
+.hijri-month {
+    font-size: 0.95rem;
+}
+
+/* ===============================
    SMALL UTILITIES
 ================================= */
 
@@ -442,5 +503,29 @@ footer {
 
     .footer-copy {
         font-size: 0.65rem !important;
+    }
+
+    .calendar-header {
+        font-size: 0.72rem;
+        letter-spacing: -0.2px;
+        white-space: nowrap;
+    }
+
+    .calendar-header,
+    .calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-cell {
+        padding: 8px 6px;
+        min-height: 56px;
+    }
+
+    .greg-day {
+        font-size: 1.05rem;
+    }
+
+    .hijri-day {
+        font-size: 0.85rem;
     }
 }

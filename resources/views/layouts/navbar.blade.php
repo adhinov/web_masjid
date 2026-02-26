@@ -27,7 +27,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-text" href="/">Jadwal Sholat</a>
+                    <a class="nav-link menu-text" href="/jadwal-sholat">Kalender Hijriyah</a>
                 </li>
 
                 <li class="nav-item">
