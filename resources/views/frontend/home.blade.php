@@ -194,6 +194,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    async function fetchHijriDateClient() {
+        try {
+            if (!hijriEl) return;
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            const formatted = formatDateForApi(date);
+            const url = `https://api.aladhan.com/v1/gToH?date=${formatted}`;
+            const res = await fetch(url, { headers: { "Accept": "application/json" } });
+            if (!res.ok) return;
+            const data = await res.json();
+            const h = data?.data?.hijri;
+            if (!h) return;
+            hijriEl.innerText = `${h.day} ${h.month.en} ${h.year} H`;
+        } catch (e) {
+            // silent fallback
+        }
+    }
+
     async function fetchPrayerTimesClient() {
         try {
             const date = new Date();
@@ -206,10 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             setTimesFromApi(data.data.timings);
 
-            if (hijriEl && data?.data?.date?.hijri) {
-                const h = data.data.date.hijri;
-                hijriEl.innerText = `${h.day} ${h.month.en} ${h.year} H`;
-            }
+            fetchHijriDateClient();
 
             updateCountdown();
         } catch (e) {
@@ -224,6 +239,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!getNextPrayer().nextPrayer) {
         fetchPrayerTimesClient();
     }
+
+    fetchHijriDateClient();
 
 });
 </script>

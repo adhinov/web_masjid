@@ -17,9 +17,11 @@ class HomeController extends Controller
 
         // Method 11 = Kemenag Indonesia
         $method = 11;
+        $hijriOffsetDays = -1;
 
         // Format tanggal hari ini
-        $today = Carbon::now()->format('d-m-Y');
+        $todayCarbon = Carbon::now();
+        $today = $todayCarbon->format('d-m-Y');
 
         // Cache per hari (86400 detik = 1 hari)
         try {
@@ -88,10 +90,27 @@ class HomeController extends Controller
         ];
 
 
-        // Ambil tanggal hijriyah juga (bonus)
+        // Ambil tanggal hijriyah (mengacu offset)
         $tanggalHijriyah = $response['data']['date']['hijri']['day'] . ' ' .
                            $response['data']['date']['hijri']['month']['en'] . ' ' .
                            $response['data']['date']['hijri']['year'] . ' H';
+
+        try {
+            $hijriDate = $todayCarbon->copy()->addDays($hijriOffsetDays)->format('d-m-Y');
+            $hijriApi = Http::timeout(8)
+                ->acceptJson()
+                ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                ->get('https://api.aladhan.com/v1/gToH', [
+                    'date' => $hijriDate,
+                ]);
+
+            if ($hijriApi->ok() && isset($hijriApi['data']['hijri'])) {
+                $h = $hijriApi['data']['hijri'];
+                $tanggalHijriyah = $h['day'] . ' ' . $h['month']['en'] . ' ' . $h['year'] . ' H';
+            }
+        } catch (\Throwable $e) {
+            // keep fallback hijri date from timings
+        }
 
         return view('frontend.home', compact('jadwal', 'tanggalHijriyah'));
     }
@@ -101,6 +120,7 @@ class HomeController extends Controller
         $latitude = -6.450593;
         $longitude = 107.038322;
         $method = 11;
+        $offsetDays = -1;
 
         $now = Carbon::now();
         Carbon::setLocale('id');
@@ -127,94 +147,46 @@ class HomeController extends Controller
         $hijriDays = [];
         $hijriMonthLabel = $gregLabel;
 
-        $cacheKey = "hijri_calendar_{$year}_{$month}";
+        $cacheKey = "hijri_calendar_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
             $hijriDays = $cached['days'] ?? [];
             $hijriMonthLabel = $cached['label'] ?? $gregLabel;
         } else {
-            try {
-                $url = "https://api.aladhan.com/v1/gToHCalendar/{$month}/{$year}";
-                $api = Http::timeout(12)
-                    ->acceptJson()
-                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                    ->get($url);
-
-                // Fallback: try with location params if the plain call fails
-                if (!$api->ok()) {
-                    $api = Http::timeout(12)
+            $daysInMonth = $now->daysInMonth;
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                try {
+                    $date = Carbon::create($year, $month, $day)
+                        ->addDays($offsetDays)
+                        ->format('d-m-Y');
+                    $api = Http::timeout(8)
                         ->acceptJson()
                         ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                        ->get($url, [
-                            'latitude'  => $latitude,
-                            'longitude' => $longitude,
-                            'method'    => $method,
-                            'timezone'  => 'Asia/Jakarta',
+                        ->get('https://api.aladhan.com/v1/gToH', [
+                            'date' => $date,
                         ]);
-                }
 
-                $rows = $api->ok() ? $api->json('data') : null;
+                    if (!$api->ok()) {
+                        continue;
+                    }
 
-                if (is_array($rows)) {
-                    foreach ($rows as $row) {
-                        $gDay = isset($row['date']['gregorian']['day'])
-                            ? (int) $row['date']['gregorian']['day']
-                            : null;
-                        $hDay = $row['date']['hijri']['day'] ?? null;
+                    $data = $api->json('data');
+                    $hDay = $data['hijri']['day'] ?? null;
+                    if ($hDay) {
+                        $hijriDays[$day] = $hDay;
+                    }
 
-                        if ($gDay && $hDay) {
-                            $hijriDays[$gDay] = $hDay;
-                        }
-
-                        if ($gDay === (int) $now->format('j')) {
-                            $hMonthEn = $row['date']['hijri']['month']['en'] ?? null;
-                            $hYear = $row['date']['hijri']['year'] ?? null;
-                            if ($hMonthEn && $hYear) {
-                                $hMonth = $hijriMonthMap[$hMonthEn] ?? $hMonthEn;
-                                $hijriMonthLabel = "{$hMonth} {$hYear} H / {$gregLabel}";
-                            }
+                    if ($day === (int) $now->format('j')) {
+                        $hMonthEn = $data['hijri']['month']['en'] ?? null;
+                        $hYear = $data['hijri']['year'] ?? null;
+                        if ($hMonthEn && $hYear) {
+                            $hMonth = $hijriMonthMap[$hMonthEn] ?? $hMonthEn;
+                            $hijriMonthLabel = "{$hMonth} {$hYear} H / {$gregLabel}";
                         }
                     }
-                }
-            } catch (\Throwable $e) {
-                // keep fallback labels
-            }
-
-            // If calendar API failed, fallback to per-day conversion
-            if (empty($hijriDays)) {
-                $daysInMonth = $now->daysInMonth;
-                for ($day = 1; $day <= $daysInMonth; $day++) {
-                    try {
-                        $date = Carbon::create($year, $month, $day)->format('d-m-Y');
-                        $api = Http::timeout(8)
-                            ->acceptJson()
-                            ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                            ->get('https://api.aladhan.com/v1/gToH', [
-                                'date' => $date,
-                            ]);
-
-                        if (!$api->ok()) {
-                            continue;
-                        }
-
-                        $data = $api->json('data');
-                        $hDay = $data['hijri']['day'] ?? null;
-                        if ($hDay) {
-                            $hijriDays[$day] = $hDay;
-                        }
-
-                        if ($day === (int) $now->format('j')) {
-                            $hMonthEn = $data['hijri']['month']['en'] ?? null;
-                            $hYear = $data['hijri']['year'] ?? null;
-                            if ($hMonthEn && $hYear) {
-                                $hMonth = $hijriMonthMap[$hMonthEn] ?? $hMonthEn;
-                                $hijriMonthLabel = "{$hMonth} {$hYear} H / {$gregLabel}";
-                            }
-                        }
-                    } catch (\Throwable $e) {
-                        // keep going
-                    }
+                } catch (\Throwable $e) {
+                    // keep going
                 }
             }
 
