@@ -307,7 +307,7 @@ footer {
 .hijri-calendar {
     background: #f8fafb;
     border-radius: 12px;
-    border: 1px solid #e5ebf1;
+    border: 1.5px solid #d2dbe5;
     padding: 10px;
 }
 
@@ -331,9 +331,10 @@ footer {
     border-radius: 10px;
     padding: 10px 8px;
     text-align: center;
-    border: 1px solid #edf1f6;
+    border: 1.5px solid #dbe3ec;
     min-height: 64px;
     position: relative;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 .calendar-cell.is-empty {
@@ -375,9 +376,10 @@ footer {
 
 .holiday-panel {
     background: #f8fafb;
-    border: 1px solid #e5ebf1;
+    border: 1.5px solid #d2dbe5;
     border-radius: 12px;
     padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
 .holiday-title {
