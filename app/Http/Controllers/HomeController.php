@@ -147,7 +147,7 @@ class HomeController extends Controller
         $hijriDays = [];
         $hijriMonthLabel = $gregLabel;
 
-        $cacheKey = "hijri_calendar_{$year}_{$month}_offset{$offsetDays}";
+        $cacheKey = "hijri_calendar_v2_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
