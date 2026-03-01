@@ -236,6 +236,45 @@ class HomeController extends Controller
             ], 86400);
         }
 
-        return view('frontend.hijri-calendar', compact('hijriDays', 'hijriMonthLabel'));
+        $holidayMap = [];
+        $holidayList = [];
+
+        $holidayByYear = [
+            2026 => [
+                '2026-01-16' => ["Isra Mi'raj 1447 H"],
+                '2026-02-19' => ['Awal Ramadan 1447 H'],
+                '2026-03-07' => ["Nuzulul Qur'an 17 Ramadan"],
+                '2026-03-21' => ['Idul Fitri 1 Syawal 1447 H'],
+                '2026-03-22' => ['Idul Fitri (Hari ke-2)'],
+                '2026-05-27' => ['Idul Adha 10 Dzulhijjah 1447 H'],
+                '2026-06-16' => ['Tahun Baru Islam 1 Muharram 1448 H'],
+                '2026-08-25' => ['Maulid Nabi 12 Rabiul Awal 1448 H'],
+            ],
+        ];
+
+        $holidaySource = $holidayByYear[$year] ?? [];
+        foreach ($holidaySource as $date => $names) {
+            try {
+                $dateCarbon = Carbon::createFromFormat('Y-m-d', $date);
+            } catch (\Throwable $e) {
+                continue;
+            }
+
+            if ((int) $dateCarbon->year !== $year || (int) $dateCarbon->month !== $month) {
+                continue;
+            }
+
+            $day = (int) $dateCarbon->day;
+            $holidayMap[$day] = $names;
+
+            foreach ($names as $name) {
+                $holidayList[] = [
+                    'date' => $dateCarbon->translatedFormat('d F Y'),
+                    'name' => $name,
+                ];
+            }
+        }
+
+        return view('frontend.hijri-calendar', compact('hijriDays', 'hijriMonthLabel', 'holidayMap', 'holidayList'));
     }
 }
