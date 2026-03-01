@@ -190,6 +190,46 @@ class HomeController extends Controller
                 }
             }
 
+            // Fill any missing hijri days by simple sequence fallback
+            if (!empty($hijriDays)) {
+                // Forward fill
+                $lastHijri = null;
+                for ($day = 1; $day <= $daysInMonth; $day++) {
+                    if (isset($hijriDays[$day])) {
+                        $lastHijri = (int) $hijriDays[$day];
+                        continue;
+                    }
+
+                    if ($lastHijri !== null) {
+                        $lastHijri++;
+                        if ($lastHijri > 30) {
+                            $lastHijri = 1;
+                        }
+                        $hijriDays[$day] = (string) $lastHijri;
+                    }
+                }
+
+                // Backward fill if the first days are missing
+                $firstKnownDay = null;
+                for ($day = 1; $day <= $daysInMonth; $day++) {
+                    if (isset($hijriDays[$day])) {
+                        $firstKnownDay = $day;
+                        break;
+                    }
+                }
+
+                if ($firstKnownDay && $firstKnownDay > 1) {
+                    $hijriValue = (int) $hijriDays[$firstKnownDay];
+                    for ($day = $firstKnownDay - 1; $day >= 1; $day--) {
+                        $hijriValue--;
+                        if ($hijriValue < 1) {
+                            $hijriValue = 30;
+                        }
+                        $hijriDays[$day] = (string) $hijriValue;
+                    }
+                }
+            }
+
             Cache::put($cacheKey, [
                 'days' => $hijriDays,
                 'label' => $hijriMonthLabel,
