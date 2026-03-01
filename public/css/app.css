@@ -333,6 +333,7 @@ footer {
     text-align: center;
     border: 1px solid #edf1f6;
     min-height: 64px;
+    position: relative;
 }
 
 .calendar-cell.is-empty {
@@ -359,6 +360,62 @@ footer {
 
 .hijri-month {
     font-size: 0.95rem;
+}
+
+.holiday-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #f39c12;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.25);
+}
+
+.holiday-panel {
+    background: #f8fafb;
+    border: 1px solid #e5ebf1;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.holiday-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e7e34;
+    margin-bottom: 10px;
+}
+
+.holiday-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.holiday-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.holiday-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e7e34;
+}
+
+.holiday-name {
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+.holiday-empty {
+    font-size: 0.85rem;
+    color: #6c757d;
 }
 
 /* ===============================
@@ -519,6 +576,15 @@ footer {
     .calendar-cell {
         padding: 8px 6px;
         min-height: 56px;
+    }
+
+    .holiday-dot {
+        top: auto;
+        right: 50%;
+        bottom: 6px;
+        width: 6px;
+        height: 6px;
+        transform: translateX(50%);
     }
 
     .greg-day {
