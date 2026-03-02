@@ -160,15 +160,17 @@ class HomeController extends Controller
         ];
 
         $hijriDays = [];
-        $hijriMonthLabel = $gregLabel;
+        $hijriMonthLabel = '';
         $hijriRangeLabel = '';
+        $firstHijriMeta = null;
+        $lastHijriMeta = null;
 
-        $cacheKey = "hijri_calendar_v2_{$year}_{$month}_offset{$offsetDays}";
+        $cacheKey = "hijri_calendar_v3_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
             $hijriDays = $cached['days'] ?? [];
-            $hijriMonthLabel = $cached['label'] ?? $gregLabel;
+            $hijriMonthLabel = $cached['label'] ?? '';
             $hijriRangeLabel = $cached['range'] ?? '';
         } else {
             $daysInMonth = $displayDate->daysInMonth;
@@ -189,14 +191,23 @@ class HomeController extends Controller
                     }
 
                     $data = $api->json('data');
-                    $hDay = $data['hijri']['day'] ?? null;
+                    $hijriMeta = $data['hijri'] ?? null;
+                    $hDay = $hijriMeta['day'] ?? null;
                     if ($hDay) {
                         $hijriDays[$day] = $hDay;
                     }
 
-                    if ($day === 15) {
-                        $hMonthEn = $data['hijri']['month']['en'] ?? null;
-                        $hYear = $data['hijri']['year'] ?? null;
+                    if ($hijriMeta && !$firstHijriMeta) {
+                        $firstHijriMeta = $hijriMeta;
+                    }
+
+                    if ($hijriMeta) {
+                        $lastHijriMeta = $hijriMeta;
+                    }
+
+                    if ($day === 15 && $hijriMeta) {
+                        $hMonthEn = $hijriMeta['month']['en'] ?? null;
+                        $hYear = $hijriMeta['year'] ?? null;
                         if ($hMonthEn && $hYear) {
                             $hMonth = $hijriMonthMap[$hMonthEn] ?? $hMonthEn;
                             $hijriMonthLabel = "{$hMonth} {$hYear} H / {$gregLabel}";
@@ -208,40 +219,26 @@ class HomeController extends Controller
             }
 
             // Build Hijri month range label (e.g., Ramadan 1447 - Shawwal 1447)
-            try {
-                $firstDate = Carbon::create($year, $month, 1)->addDays($offsetDays)->format('d-m-Y');
-                $lastDate = Carbon::create($year, $month, $daysInMonth)->addDays($offsetDays)->format('d-m-Y');
+            if ($firstHijriMeta && $lastHijriMeta) {
+                $firstMonthEn = $firstHijriMeta['month']['en'] ?? null;
+                $lastMonthEn = $lastHijriMeta['month']['en'] ?? null;
+                $firstYear = $firstHijriMeta['year'] ?? null;
+                $lastYear = $lastHijriMeta['year'] ?? null;
 
-                $firstApi = Http::timeout(8)
-                    ->acceptJson()
-                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                    ->get('https://api.aladhan.com/v1/gToH', [
-                        'date' => $firstDate,
-                    ]);
-                $lastApi = Http::timeout(8)
-                    ->acceptJson()
-                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                    ->get('https://api.aladhan.com/v1/gToH', [
-                        'date' => $lastDate,
-                    ]);
-
-                if ($firstApi->ok() && $lastApi->ok()) {
-                    $firstHijri = $firstApi->json('data.hijri');
-                    $lastHijri = $lastApi->json('data.hijri');
-
-                    $firstMonthEn = $firstHijri['month']['en'] ?? null;
-                    $lastMonthEn = $lastHijri['month']['en'] ?? null;
-                    $firstYear = $firstHijri['year'] ?? null;
-                    $lastYear = $lastHijri['year'] ?? null;
-
-                    if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
-                        $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
-                        $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
-                        $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
-                    }
+                if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
+                    $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
+                    $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
+                    $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
                 }
-            } catch (\Throwable $e) {
-                // keep empty if fails
+            }
+
+            if (empty($hijriMonthLabel) && $firstHijriMeta) {
+                $fallbackMonthEn = $firstHijriMeta['month']['en'] ?? null;
+                $fallbackYear = $firstHijriMeta['year'] ?? null;
+                if ($fallbackMonthEn && $fallbackYear) {
+                    $fallbackMonth = $hijriMonthMap[$fallbackMonthEn] ?? $fallbackMonthEn;
+                    $hijriMonthLabel = "{$fallbackMonth} {$fallbackYear} H / {$gregLabel}";
+                }
             }
 
             // Fill any missing hijri days by simple sequence fallback
