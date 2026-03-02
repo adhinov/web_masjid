@@ -228,7 +228,11 @@ class HomeController extends Controller
                 if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
                     $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
                     $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
-                    $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                    if ($firstMonth === $lastMonth && $firstYear === $lastYear) {
+                        $hijriRangeLabel = "{$firstMonth} {$firstYear}";
+                    } else {
+                        $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                    }
                 }
             }
 
