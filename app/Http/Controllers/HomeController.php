@@ -165,7 +165,7 @@ class HomeController extends Controller
         $firstHijriMeta = null;
         $lastHijriMeta = null;
 
-        $cacheKey = "hijri_calendar_v4_{$year}_{$month}_offset{$offsetDays}";
+        $cacheKey = "hijri_calendar_v5_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
@@ -258,6 +258,24 @@ class HomeController extends Controller
                 }
             } catch (\Throwable $e) {
                 // keep empty if fails
+            }
+
+            // Fallback range label from looped metadata if API range failed
+            if (empty($hijriRangeLabel) && $firstHijriMeta && $lastHijriMeta) {
+                $firstMonthEn = $firstHijriMeta['month']['en'] ?? null;
+                $lastMonthEn = $lastHijriMeta['month']['en'] ?? null;
+                $firstYear = $firstHijriMeta['year'] ?? null;
+                $lastYear = $lastHijriMeta['year'] ?? null;
+
+                if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
+                    $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
+                    $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
+                    if ($firstMonth === $lastMonth && $firstYear === $lastYear) {
+                        $hijriRangeLabel = "{$firstMonth} {$firstYear}";
+                    } else {
+                        $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                    }
+                }
             }
 
             if (empty($hijriMonthLabel) && $firstHijriMeta) {
