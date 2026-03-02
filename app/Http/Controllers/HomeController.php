@@ -210,7 +210,7 @@ class HomeController extends Controller
                         $hYear = $hijriMeta['year'] ?? null;
                         if ($hMonthEn && $hYear) {
                             $hMonth = $hijriMonthMap[$hMonthEn] ?? $hMonthEn;
-                            $hijriMonthLabel = "{$hMonth} {$hYear} H / {$gregLabel}";
+                            $hijriMonthLabel = "{$hMonth} {$hYear}";
                         }
                     }
                 } catch (\Throwable $e) {
@@ -265,7 +265,7 @@ class HomeController extends Controller
                 $fallbackYear = $firstHijriMeta['year'] ?? null;
                 if ($fallbackMonthEn && $fallbackYear) {
                     $fallbackMonth = $hijriMonthMap[$fallbackMonthEn] ?? $fallbackMonthEn;
-                    $hijriMonthLabel = "{$fallbackMonth} {$fallbackYear} H / {$gregLabel}";
+                    $hijriMonthLabel = "{$fallbackMonth} {$fallbackYear}";
                 }
             }
 
