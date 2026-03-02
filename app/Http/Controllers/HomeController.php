@@ -165,7 +165,7 @@ class HomeController extends Controller
         $firstHijriMeta = null;
         $lastHijriMeta = null;
 
-        $cacheKey = "hijri_calendar_v3_{$year}_{$month}_offset{$offsetDays}";
+        $cacheKey = "hijri_calendar_v4_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
@@ -219,21 +219,45 @@ class HomeController extends Controller
             }
 
             // Build Hijri month range label (e.g., Ramadan 1447 - Shawwal 1447)
-            if ($firstHijriMeta && $lastHijriMeta) {
-                $firstMonthEn = $firstHijriMeta['month']['en'] ?? null;
-                $lastMonthEn = $lastHijriMeta['month']['en'] ?? null;
-                $firstYear = $firstHijriMeta['year'] ?? null;
-                $lastYear = $lastHijriMeta['year'] ?? null;
+            try {
+                $firstDate = Carbon::create($year, $month, 1)->addDays($offsetDays)->format('d-m-Y');
+                $lastDate = Carbon::create($year, $month, $daysInMonth)->addDays($offsetDays)->format('d-m-Y');
 
-                if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
-                    $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
-                    $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
-                    if ($firstMonth === $lastMonth && $firstYear === $lastYear) {
-                        $hijriRangeLabel = "{$firstMonth} {$firstYear}";
-                    } else {
-                        $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                $firstApi = Http::timeout(8)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get('https://api.aladhan.com/v1/gToH', [
+                        'date' => $firstDate,
+                    ]);
+
+                $lastApi = Http::timeout(8)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get('https://api.aladhan.com/v1/gToH', [
+                        'date' => $lastDate,
+                    ]);
+
+                if ($firstApi->ok() && $lastApi->ok()) {
+                    $firstHijri = $firstApi->json('data.hijri');
+                    $lastHijri = $lastApi->json('data.hijri');
+
+                    $firstMonthEn = $firstHijri['month']['en'] ?? null;
+                    $lastMonthEn = $lastHijri['month']['en'] ?? null;
+                    $firstYear = $firstHijri['year'] ?? null;
+                    $lastYear = $lastHijri['year'] ?? null;
+
+                    if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
+                        $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
+                        $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
+                        if ($firstMonth === $lastMonth && $firstYear === $lastYear) {
+                            $hijriRangeLabel = "{$firstMonth} {$firstYear}";
+                        } else {
+                            $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                        }
                     }
                 }
+            } catch (\Throwable $e) {
+                // keep empty if fails
             }
 
             if (empty($hijriMonthLabel) && $firstHijriMeta) {
