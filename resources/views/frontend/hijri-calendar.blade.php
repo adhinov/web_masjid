@@ -9,10 +9,29 @@
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
                 <div>
                     <h2 class="text-masjid fw-semibold mb-1">Kalender Hijriyah</h2>
-                    <p class="text-muted mb-0">Tampilan tanggal hijriyah untuk bulan berjalan.</p>
+                    <p class="text-muted mb-0">Tanggal Hijriyah dan Masehi.</p>
                 </div>
-                <div class="hijri-month text-masjid fw-semibold">
-                    {{ $hijriMonthLabel }}
+                <div class="calendar-months text-md-end">
+                    <div class="calendar-nav-title text-masjid">{{ $displayDate->translatedFormat('F Y') }}</div>
+                    <div class="hijri-month text-masjid fw-semibold">
+                        {{ !empty($hijriRangeLabel) ? $hijriRangeLabel : $hijriMonthLabel }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar-nav d-flex align-items-center justify-content-end mb-3 gap-2">
+                <div class="calendar-nav-buttons">
+                    @if ($prevLink)
+                        <a class="btn btn-outline-success btn-sm" href="{{ $prevLink }}">&lt;</a>
+                    @else
+                        <span class="btn btn-outline-secondary btn-sm disabled">&lt;</span>
+                    @endif
+
+                    @if ($nextLink)
+                        <a class="btn btn-outline-success btn-sm" href="{{ $nextLink }}">&gt;</a>
+                    @else
+                        <span class="btn btn-outline-secondary btn-sm disabled">&gt;</span>
+                    @endif
                 </div>
             </div>
 
@@ -31,8 +50,8 @@
                         <div class="calendar-grid" id="calendar-grid">
                             @php
                                 $now = \Carbon\Carbon::now();
-                                $firstDay = $now->copy()->startOfMonth();
-                                $daysInMonth = $now->daysInMonth;
+                                $firstDay = $displayDate->copy()->startOfMonth();
+                                $daysInMonth = $displayDate->daysInMonth;
                                 $startWeekday = $firstDay->dayOfWeek; // 0 = Ahad
                             @endphp
 
@@ -42,7 +61,7 @@
 
                             @for ($day = 1; $day <= $daysInMonth; $day++)
                                 @php
-                                    $isToday = $day === (int) $now->format('j');
+                                    $isToday = $isCurrentMonth && $day === (int) $now->format('j');
                                     $holidayNames = $holidayMap[$day] ?? null;
                                 @endphp
                                 <div class="calendar-cell {{ $isToday ? 'is-today' : '' }}">
