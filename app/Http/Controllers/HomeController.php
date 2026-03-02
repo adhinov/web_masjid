@@ -115,7 +115,7 @@ class HomeController extends Controller
         return view('frontend.home', compact('jadwal', 'tanggalHijriyah'));
     }
 
-    public function hijriCalendar()
+    public function hijriCalendar(Request $request)
     {
         $latitude = -6.450593;
         $longitude = 107.038322;
@@ -125,9 +125,24 @@ class HomeController extends Controller
         $now = Carbon::now();
         Carbon::setLocale('id');
 
-        $year = (int) $now->year;
-        $month = (int) $now->month;
-        $gregLabel = $now->translatedFormat('F Y');
+        $requestedYear = (int) $request->query('year', (int) $now->year);
+        $requestedMonth = (int) $request->query('month', (int) $now->month);
+
+        $year = 2026;
+        $month = $requestedMonth;
+
+        if ($requestedYear !== 2026) {
+            $year = 2026;
+        }
+
+        if ($month < 1) {
+            $month = 1;
+        } elseif ($month > 12) {
+            $month = 12;
+        }
+
+        $displayDate = Carbon::create($year, $month, 1);
+        $gregLabel = $displayDate->translatedFormat('F Y');
 
         $hijriMonthMap = [
             'Muharram' => 'Muharram',
@@ -146,6 +161,7 @@ class HomeController extends Controller
 
         $hijriDays = [];
         $hijriMonthLabel = $gregLabel;
+        $hijriRangeLabel = '';
 
         $cacheKey = "hijri_calendar_v2_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
@@ -153,8 +169,9 @@ class HomeController extends Controller
         if (is_array($cached)) {
             $hijriDays = $cached['days'] ?? [];
             $hijriMonthLabel = $cached['label'] ?? $gregLabel;
+            $hijriRangeLabel = $cached['range'] ?? '';
         } else {
-            $daysInMonth = $now->daysInMonth;
+            $daysInMonth = $displayDate->daysInMonth;
             for ($day = 1; $day <= $daysInMonth; $day++) {
                 try {
                     $date = Carbon::create($year, $month, $day)
@@ -177,7 +194,7 @@ class HomeController extends Controller
                         $hijriDays[$day] = $hDay;
                     }
 
-                    if ($day === (int) $now->format('j')) {
+                    if ($day === 15) {
                         $hMonthEn = $data['hijri']['month']['en'] ?? null;
                         $hYear = $data['hijri']['year'] ?? null;
                         if ($hMonthEn && $hYear) {
@@ -188,6 +205,43 @@ class HomeController extends Controller
                 } catch (\Throwable $e) {
                     // keep going
                 }
+            }
+
+            // Build Hijri month range label (e.g., Ramadan 1447 - Shawwal 1447)
+            try {
+                $firstDate = Carbon::create($year, $month, 1)->addDays($offsetDays)->format('d-m-Y');
+                $lastDate = Carbon::create($year, $month, $daysInMonth)->addDays($offsetDays)->format('d-m-Y');
+
+                $firstApi = Http::timeout(8)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get('https://api.aladhan.com/v1/gToH', [
+                        'date' => $firstDate,
+                    ]);
+                $lastApi = Http::timeout(8)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get('https://api.aladhan.com/v1/gToH', [
+                        'date' => $lastDate,
+                    ]);
+
+                if ($firstApi->ok() && $lastApi->ok()) {
+                    $firstHijri = $firstApi->json('data.hijri');
+                    $lastHijri = $lastApi->json('data.hijri');
+
+                    $firstMonthEn = $firstHijri['month']['en'] ?? null;
+                    $lastMonthEn = $lastHijri['month']['en'] ?? null;
+                    $firstYear = $firstHijri['year'] ?? null;
+                    $lastYear = $lastHijri['year'] ?? null;
+
+                    if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
+                        $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
+                        $lastMonth = $hijriMonthMap[$lastMonthEn] ?? $lastMonthEn;
+                        $hijriRangeLabel = "{$firstMonth} {$firstYear} - {$lastMonth} {$lastYear}";
+                    }
+                }
+            } catch (\Throwable $e) {
+                // keep empty if fails
             }
 
             // Fill any missing hijri days by simple sequence fallback
@@ -233,6 +287,7 @@ class HomeController extends Controller
             Cache::put($cacheKey, [
                 'days' => $hijriDays,
                 'label' => $hijriMonthLabel,
+                'range' => $hijriRangeLabel,
             ], 86400);
         }
 
@@ -275,6 +330,31 @@ class HomeController extends Controller
             }
         }
 
-        return view('frontend.hijri-calendar', compact('hijriDays', 'hijriMonthLabel', 'holidayMap', 'holidayList'));
+        $isCurrentMonth = ($now->year === $year && (int) $now->month === $month);
+
+        $prevMonth = $month - 1;
+        $nextMonth = $month + 1;
+        $prevLink = null;
+        $nextLink = null;
+
+        if ($prevMonth >= 1) {
+            $prevLink = route('hijri.calendar', ['year' => $year, 'month' => $prevMonth]);
+        }
+
+        if ($nextMonth <= 12) {
+            $nextLink = route('hijri.calendar', ['year' => $year, 'month' => $nextMonth]);
+        }
+
+        return view('frontend.hijri-calendar', compact(
+            'hijriDays',
+            'hijriMonthLabel',
+            'hijriRangeLabel',
+            'holidayMap',
+            'holidayList',
+            'displayDate',
+            'isCurrentMonth',
+            'prevLink',
+            'nextLink'
+        ));
     }
 }
