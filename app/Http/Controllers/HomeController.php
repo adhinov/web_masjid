@@ -162,16 +162,18 @@ class HomeController extends Controller
         $hijriDays = [];
         $hijriMonthLabel = '';
         $hijriRangeLabel = '';
+        $hijriMonthByDay = [];
         $firstHijriMeta = null;
         $lastHijriMeta = null;
 
-        $cacheKey = "hijri_calendar_v5_{$year}_{$month}_offset{$offsetDays}";
+        $cacheKey = "hijri_calendar_v6_{$year}_{$month}_offset{$offsetDays}";
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached)) {
             $hijriDays = $cached['days'] ?? [];
             $hijriMonthLabel = $cached['label'] ?? '';
             $hijriRangeLabel = $cached['range'] ?? '';
+            $hijriMonthByDay = $cached['months'] ?? [];
         } else {
             $daysInMonth = $displayDate->daysInMonth;
             for ($day = 1; $day <= $daysInMonth; $day++) {
@@ -195,6 +197,12 @@ class HomeController extends Controller
                     $hDay = $hijriMeta['day'] ?? null;
                     if ($hDay) {
                         $hijriDays[$day] = $hDay;
+                    }
+                    if ($hijriMeta) {
+                        $hijriMonthByDay[$day] = [
+                            'month' => $hijriMeta['month']['en'] ?? null,
+                            'year' => $hijriMeta['year'] ?? null,
+                        ];
                     }
 
                     if ($hijriMeta && !$firstHijriMeta) {
@@ -261,11 +269,29 @@ class HomeController extends Controller
             }
 
             // Fallback range label from looped metadata if API range failed
-            if (empty($hijriRangeLabel) && $firstHijriMeta && $lastHijriMeta) {
-                $firstMonthEn = $firstHijriMeta['month']['en'] ?? null;
-                $lastMonthEn = $lastHijriMeta['month']['en'] ?? null;
-                $firstYear = $firstHijriMeta['year'] ?? null;
-                $lastYear = $lastHijriMeta['year'] ?? null;
+            if (empty($hijriRangeLabel)) {
+                $firstMonthEn = null;
+                $lastMonthEn = null;
+                $firstYear = null;
+                $lastYear = null;
+
+                ksort($hijriMonthByDay);
+                foreach ($hijriMonthByDay as $meta) {
+                    if (!empty($meta['month']) && !empty($meta['year'])) {
+                        $firstMonthEn = $meta['month'];
+                        $firstYear = $meta['year'];
+                        break;
+                    }
+                }
+
+                $reversed = array_reverse($hijriMonthByDay, true);
+                foreach ($reversed as $meta) {
+                    if (!empty($meta['month']) && !empty($meta['year'])) {
+                        $lastMonthEn = $meta['month'];
+                        $lastYear = $meta['year'];
+                        break;
+                    }
+                }
 
                 if ($firstMonthEn && $lastMonthEn && $firstYear && $lastYear) {
                     $firstMonth = $hijriMonthMap[$firstMonthEn] ?? $firstMonthEn;
@@ -331,6 +357,7 @@ class HomeController extends Controller
                 'days' => $hijriDays,
                 'label' => $hijriMonthLabel,
                 'range' => $hijriRangeLabel,
+                'months' => $hijriMonthByDay,
             ], 86400);
         }
 
