@@ -3,10 +3,10 @@
 @section('title', 'Kalender Hijriyah')
 
 @section('content')
-<div class="container my-4">
+<div class="container mt-0 mb-4">
     <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-            <div class="calendar-header-row d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
+        <div class="card-body pt-2 px-4 pb-4">
+            <div class="calendar-header-row d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
                 <div class="calendar-months text-md-start">
                     <div class="calendar-nav-title text-masjid">{{ $displayDate->translatedFormat('F Y') }}</div>
                     <div class="hijri-month text-masjid fw-semibold">

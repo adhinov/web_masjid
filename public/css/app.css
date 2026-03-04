@@ -309,7 +309,7 @@ footer {
     border-radius: 12px;
     border: 1.5px solid #d2dbe5;
     padding: 10px;
-    margin-top: -4px;
+    margin-top: -10px;
 }
 
 .calendar-header,
@@ -369,7 +369,8 @@ footer {
 }
 
 .calendar-header-row {
-    margin-bottom: 6px;
+    margin-bottom: 26px !important;
+    margin-top: -6px;
 }
 
 .calendar-months {
