@@ -17,7 +17,10 @@
                 </form>
             </div>
             <hr class="my-3">
-            <p class="mb-0">Halaman ini siap diisi fitur pengelolaan agenda & pengumuman.</p>
+            <div class="d-flex flex-column flex-md-row gap-2">
+                <a href="{{ route('admin.khotib-schedules.index') }}" class="btn btn-success">Kelola Jadwal Khotib</a>
+                <span class="text-muted align-self-center">Halaman ini siap diisi fitur pengelolaan agenda & pengumuman.</span>
+            </div>
         </div>
     </div>
 </div>

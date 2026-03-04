@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use App\Models\KhotibSchedule;
 
 class HomeController extends Controller
 {
@@ -152,7 +153,7 @@ class HomeController extends Controller
             'Jumada Al-Awwal' => 'Jumadil Awal',
             'Jumada Al-Thani' => 'Jumadil Akhir',
             'Rajab' => 'Rajab',
-            "Sha'ban" => 'Syaban',
+            "Sha'ban" => "Sya'ban",
             'Ramadan' => 'Ramadan',
             'Shawwal' => 'Syawal',
             "Dhul-Qa'dah" => 'Zulkaidah',
@@ -426,5 +427,151 @@ class HomeController extends Controller
             'prevLink',
             'nextLink'
         ));
+    }
+
+    public function agenda()
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        Carbon::setLocale('id');
+
+        $targetFriday = $now->copy();
+        if (!$targetFriday->isFriday()) {
+            $targetFriday->next(Carbon::FRIDAY);
+        }
+        $scheduleMap = $this->buildKhotibScheduleMap();
+        $targetDateKey = $targetFriday->format('Y-m-d');
+
+        if (!isset($scheduleMap[$targetDateKey])) {
+            $targetDateKey = $this->findNextScheduleDate($scheduleMap, $now);
+        }
+
+        $schedule = $targetDateKey ? ($scheduleMap[$targetDateKey] ?? null) : null;
+        $targetDate = $targetDateKey ? Carbon::createFromFormat('Y-m-d', $targetDateKey) : null;
+
+        $hijriLabel = $targetDate ? $this->getHijriLabel($targetDate) : null;
+        $dhuhrTime = $targetDate ? $this->getDhuhrTime($targetDate) : '--:--';
+
+        return view('frontend.agenda', [
+            'targetDate' => $targetDate,
+            'hijriLabel' => $hijriLabel,
+            'dhuhrTime' => $dhuhrTime,
+            'schedule' => $schedule,
+        ]);
+    }
+
+    private function buildKhotibScheduleMap(): array
+    {
+        $map = [];
+        $schedules = KhotibSchedule::all();
+
+        foreach ($schedules as $schedule) {
+            $dates = $schedule->khutbah_dates ?? [];
+            foreach ($dates as $date) {
+                if (!isset($map[$date])) {
+                    $map[$date] = $schedule;
+                }
+            }
+        }
+
+        return $map;
+    }
+
+    private function findNextScheduleDate(array $map, Carbon $now): ?string
+    {
+        $nowKey = $now->format('Y-m-d');
+        $dates = collect(array_keys($map))
+            ->filter(fn ($date) => $date >= $nowKey)
+            ->sort()
+            ->values();
+
+        return $dates->first();
+    }
+
+    private function getDhuhrTime(Carbon $date): string
+    {
+        $latitude = -6.450593;
+        $longitude = 107.038322;
+        $method = 11;
+
+        $dateKey = $date->format('d-m-Y');
+        $cacheKey = 'jadwal_sholat_' . $dateKey;
+
+        try {
+            $response = Cache::remember($cacheKey, 86400, function () use ($latitude, $longitude, $method, $dateKey) {
+                $url = "https://api.aladhan.com/v1/timings/{$dateKey}";
+
+                $api = Http::timeout(10)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get($url, [
+                        'latitude'  => $latitude,
+                        'longitude' => $longitude,
+                        'method'    => $method,
+                        'timezone'  => 'Asia/Jakarta',
+                    ]);
+
+                if ($api->ok()) {
+                    return $api->json();
+                }
+
+                return null;
+            });
+        } catch (\Throwable $e) {
+            $response = null;
+        }
+
+        if (!is_array($response) || !isset($response['data']['timings']['Dhuhr'])) {
+            return '--:--';
+        }
+
+        return $response['data']['timings']['Dhuhr'];
+    }
+
+    private function getHijriLabel(Carbon $date): ?string
+    {
+        $offsetDays = -1;
+        $hijriMonthMap = [
+            'Muharram' => 'Muharram',
+            'Safar' => 'Safar',
+            "Rabi' Al-Awwal" => 'Rabiul Awal',
+            "Rabi' Al-Thani" => 'Rabiul Akhir',
+            'Jumada Al-Awwal' => 'Jumadil Awal',
+            'Jumada Al-Thani' => 'Jumadil Akhir',
+            'Rajab' => 'Rajab',
+            "Sha'ban" => 'Syaban',
+            'Ramadan' => 'Ramadan',
+            'Shawwal' => 'Syawal',
+            "Dhul-Qa'dah" => 'Zulkaidah',
+            'Dhul-Hijjah' => 'Zulhijah',
+        ];
+
+        $cacheKey = 'hijri_label_' . $date->format('Y-m-d');
+        $cached = Cache::get($cacheKey);
+        if (is_string($cached)) {
+            return $cached;
+        }
+
+        try {
+            $hijriDate = $date->copy()->addDays($offsetDays)->format('d-m-Y');
+            $api = Http::timeout(8)
+                ->acceptJson()
+                ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                ->get('https://api.aladhan.com/v1/gToH', [
+                    'date' => $hijriDate,
+                ]);
+
+            if ($api->ok() && isset($api['data']['hijri'])) {
+                $h = $api['data']['hijri'];
+                $monthEn = $h['month']['en'] ?? null;
+                $month = $monthEn ? ($hijriMonthMap[$monthEn] ?? $monthEn) : null;
+                $label = $h['day'] . ' ' . $month . ' ' . $h['year'] . ' H';
+                Cache::put($cacheKey, $label, 86400);
+                return $label;
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        return null;
     }
 }

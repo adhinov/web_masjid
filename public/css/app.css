@@ -388,6 +388,16 @@ footer {
     color: #1e7e34;
 }
 
+.agenda-subtitle {
+    font-size: 1rem !important;
+}
+
+@media (max-width: 768px) {
+    .agenda-subtitle {
+        font-size: 0.85rem !important;
+    }
+}
+
 
 .holiday-dot {
     position: absolute;
