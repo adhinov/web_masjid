@@ -499,11 +499,20 @@ footer {
     text-decoration: none;
 }
 
+.search-input {
+    min-width: 260px;
+}
+
 .agenda-note {
     margin-top: 12px;
     font-size: 0.85rem;
     color: #6b7280;
     text-align: center;
+}
+
+.ramadhan-banner {
+    font-family: "Amiri", "Georgia", serif;
+    letter-spacing: 0.2px;
 }
 
 @media (max-width: 768px) {

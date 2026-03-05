@@ -27,10 +27,8 @@
                     <p class="mb-2 hero-subtitle">
                         Pusat informasi kegiatan, jadwal sholat, dan layanan jemaah.
                     </p>
-
-                    <!-- Tanggal Hijriyah -->
-                    <p id="hijri-date" class="text-muted mb-3 hero-date hero-date-blue">
-                        {{ $tanggalHijriyah }}
+                    <p class="mb-3 fw-semibold text-success fs-5 ramadhan-banner">
+                        Selamat Menunaikan Ibadah Puasa Ramadhan 1446 H
                     </p>
 
                     <!-- Countdown -->
@@ -45,7 +43,7 @@
                     @endphp
 
                     <p class="text-center fw-semibold mb-3 prayer-heading">
-                        Waktu Sholat Kabupaten Bogor - {{ $tanggalMasehi }}
+                        Waktu Sholat Kabupaten Bogor - {{ $tanggalMasehi }} | <span id="hijri-date">{{ $tanggalHijriyah }}</span>
                     </p>
 
                     <!-- Jadwal Sholat Dinamis -->
