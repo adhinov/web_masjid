@@ -9,6 +9,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::view('/beranda', 'frontend.beranda');
 Route::get("/khotib-jum'at", [HomeController::class, 'agenda'])->name('khotib.jumat');
 Route::redirect('/agenda', "/khotib-jum'at");
+Route::view('/agenda-maintenance', 'frontend.agenda-maintenance')->name('agenda.maintenance');
 Route::get('/kalender-hijriyah', [HomeController::class, 'hijriCalendar'])->name('hijri.calendar');
 Route::redirect('/jadwal-sholat', '/kalender-hijriyah');
 

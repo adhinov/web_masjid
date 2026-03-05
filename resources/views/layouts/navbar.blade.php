@@ -35,7 +35,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-text" href="#pengumuman">Pengumuman</a>
+                    <a class="nav-link menu-text" href="{{ route('agenda.maintenance') }}">Agenda</a>
                 </li>
 
                 <li class="nav-item">
