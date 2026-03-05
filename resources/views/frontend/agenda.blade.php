@@ -61,7 +61,7 @@
                 <a class="agenda-maps" href="https://maps.app.goo.gl/QBiFWNgz5YQmHeb47" target="_blank" rel="noopener">Lihat Lokasi Masjid</a>
             </div>
 
-            <div class="agenda-note">Note : Pembaruan jadwal otomatis terupadate setiap Kamis Pukul : 20.00 WIB</div>
+            <div class="agenda-note">Note : Pembaruan jadwal otomatis ter-update setiap Kamis, Pukul : 20.00 WIB</div>
         </div>
     </div>
 </div>

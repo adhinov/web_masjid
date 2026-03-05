@@ -56,6 +56,16 @@
                 <p class="section-text mb-0">
                     Konfirmasi transfer dapat menghubungi nomor WhatsApp pengurus.
                 </p>
+                <div class="mt-2 d-flex flex-column gap-1">
+                    <a class="text-decoration-none d-inline-flex align-items-center gap-2" href="https://wa.me/6281311064865" target="_blank" rel="noopener">
+                        <i class="bi bi-whatsapp fs-5 text-success" aria-hidden="true"></i>
+                        <span>Joko Purnomo 081311064865</span>
+                    </a>
+                    <a class="text-decoration-none d-inline-flex align-items-center gap-2" href="https://wa.me/6285714336766" target="_blank" rel="noopener">
+                        <i class="bi bi-whatsapp fs-5 text-success" aria-hidden="true"></i>
+                        <span>Kristiawan 085714336766</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
