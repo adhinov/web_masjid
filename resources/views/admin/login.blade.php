@@ -11,7 +11,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <h2 class="text-masjid fw-semibold mb-3 text-center">Login Admin</h2>
-                    <p class="text-muted text-center mb-4">Masuk untuk mengelola konten masjid.</p>
+                    <p class="text-muted text-center mb-4">Hanya untuk akun yang sudah terverifikasi.</p>
 
                     @if ($errors->any())
                         <div class="alert alert-danger py-2 small-text">
