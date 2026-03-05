@@ -12,22 +12,102 @@ class KhotibScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = KhotibSchedule::query();
+        Carbon::setLocale('id');
         $search = trim($request->query('q', ''));
+        $searchLower = mb_strtolower($search);
 
-        if ($search !== '') {
-            $searchLower = mb_strtolower($search);
-            $query->whereRaw('LOWER(khotib_name) LIKE ?', ['%' . $searchLower . '%']);
+        $monthMapId = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+        $monthMapEn = [
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December',
+        ];
+
+        $monthAlias = [
+            'january' => 'januari',
+            'february' => 'februari',
+            'march' => 'maret',
+            'april' => 'april',
+            'may' => 'mei',
+            'june' => 'juni',
+            'july' => 'juli',
+            'august' => 'agustus',
+            'september' => 'september',
+            'october' => 'oktober',
+            'november' => 'november',
+            'december' => 'desember',
+        ];
+
+        if (isset($monthAlias[$searchLower])) {
+            $searchLower = $monthAlias[$searchLower];
         }
 
-        $schedules = $query->get()
+        $schedules = KhotibSchedule::all()
+            ->map(function (KhotibSchedule $schedule) use ($monthMapId, $monthMapEn) {
+                $dates = $schedule->khutbah_dates ?? [];
+                $months = collect($dates)
+                    ->map(function ($date) use ($monthMapId, $monthMapEn) {
+                        try {
+                            $month = Carbon::createFromFormat('Y-m-d', $date)->month;
+                            $monthId = $monthMapId[$month] ?? null;
+                            $monthEn = $monthMapEn[$month] ?? null;
+                            return trim(($monthId ?? '') . ' ' . ($monthEn ?? '')) ?: null;
+                        } catch (\Throwable $e) {
+                            return null;
+                        }
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                $tokens = strtolower(trim($schedule->khotib_name . ' ' . implode(' ', $months)));
+                $schedule->setAttribute('search_tokens', $tokens);
+
+                return $schedule;
+            });
+
+        if ($searchLower !== '') {
+            $schedules = $schedules->filter(function (KhotibSchedule $schedule) use ($searchLower) {
+                $tokens = $schedule->getAttribute('search_tokens') ?? '';
+                return str_contains($tokens, $searchLower);
+            });
+        }
+
+        $schedules = $schedules
             ->sortBy(function (KhotibSchedule $schedule) {
                 $dates = $schedule->khutbah_dates ?? [];
                 return $dates ? min($dates) : '9999-12-31';
             })
             ->values();
 
-        return view('admin.khotib-schedules.index', compact('schedules', 'search'));
+        return view('admin.khotib-schedules.index', [
+            'schedules' => $schedules,
+            'search' => $search,
+            'monthMapId' => $monthMapId,
+        ]);
     }
 
     public function create()
