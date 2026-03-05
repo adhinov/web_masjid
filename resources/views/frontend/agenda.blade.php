@@ -3,6 +3,7 @@
 @section('title', 'Agenda Jumat')
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <div class="container mt-2 mb-4">
     <div class="card shadow-sm border-0 agenda-card">
         <div class="agenda-header text-center">
@@ -20,33 +21,28 @@
 
             <div class="agenda-info agenda-info-plain">
                 <div class="agenda-item">
-                    <span class="agenda-emoji" aria-hidden="true">&#128197;</span>
+                    <span class="agenda-emoji" aria-hidden="true"><i class="bi bi-calendar-event"></i></span>
                     <div>
                         <div class="agenda-label">Hari/Tgl</div>
                         <div class="agenda-value"><strong>{{ $dayLabel }}</strong> | {{ $hijriDisplay }}</div>
                     </div>
                 </div>
                 <div class="agenda-item">
-                    <span class="agenda-emoji" aria-hidden="true">&#128115;&#8205;&#9794;&#65039;</span>
+                    <span class="agenda-emoji" aria-hidden="true"><i class="bi bi-person-circle"></i></span>
                     <div>
                         <div class="agenda-label">Khotib</div>
                         <div class="agenda-value"><strong>{{ $schedule->khotib_name ?? '-' }}</strong></div>
                     </div>
                 </div>
                 <div class="agenda-item">
-                    <span class="agenda-emoji" aria-hidden="true">
-                    <svg viewBox="0 0 64 64" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="32" cy="22" r="10" fill="#5c6b7a"/>
-                        <path d="M16 54c2-10 10-18 16-18s14 8 16 18H16Z" fill="#5c6b7a"/>
-                    </svg>
-                    </span>
+                    <span class="agenda-emoji" aria-hidden="true"><i class="bi bi-person"></i></span>
                     <div>
                         <div class="agenda-label">Bilal</div>
                         <div class="agenda-value"><strong>{{ $schedule->bilal ?? 'Bp. Adi' }}</strong></div>
                     </div>
                 </div>
                 <div class="agenda-item agenda-item-highlight">
-                    <span class="agenda-emoji" aria-hidden="true">&#128227;</span>
+                    <span class="agenda-emoji" aria-hidden="true"><i class="bi bi-megaphone"></i></span>
                     <div>
                         <div class="agenda-label">Waktu Zuhur</div>
                         <div class="agenda-value agenda-badge">{{ $dhuhrDisplay }} WIB</div>
@@ -61,7 +57,7 @@
                 <a class="agenda-maps" href="https://maps.app.goo.gl/QBiFWNgz5YQmHeb47" target="_blank" rel="noopener">Lihat Lokasi Masjid</a>
             </div>
 
-            <div class="agenda-note">Note : Pembaruan jadwal otomatis ter-update setiap Kamis, Pukul : 20.00 WIB</div>
+            <div class="agenda-note">Jadwal otomatis ter-update setiap Kamis, Pukul : 20.00 WIB</div>
         </div>
     </div>
 </div>

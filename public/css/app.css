@@ -449,8 +449,9 @@ footer {
 }
 
 .agenda-emoji {
-    font-size: 22px;
+    font-size: 20px;
     line-height: 1;
+    color: #1f2937;
 }
 
 .agenda-label {
