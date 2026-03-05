@@ -11,7 +11,12 @@
                     <h2 class="text-masjid fw-semibold mb-1">Jadwal Khotib Jumat</h2>
                     <p class="text-muted mb-0">Kelola jadwal khotib Jumat per nama khotib.</p>
                 </div>
-                <a href="{{ route('admin.khotib-schedules.create') }}" class="btn btn-success">Tambah Jadwal</a>
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                    <form method="GET" action="{{ route('admin.khotib-schedules.index') }}" class="d-flex gap-2">
+                        <input type="text" name="q" id="khotib-search" value="{{ $search ?? '' }}" class="form-control form-control-sm" placeholder="Cari nama khotib" autocomplete="off">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Cari</button>
+                    </form>
+                </div>
             </div>
 
             @if (session('success'))
@@ -19,7 +24,7 @@
             @endif
 
             <div class="table-responsive mt-3">
-                <table class="table table-bordered align-middle">
+                <table class="table table-bordered table-sm align-middle">
                     <thead class="table-light">
                         <tr>
                             <th style="width: 40px;">No</th>
@@ -30,9 +35,9 @@
                             <th style="width: 140px;">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="khotib-table-body">
                         @forelse ($schedules as $index => $schedule)
-                            <tr>
+                            <tr data-khotib="{{ strtolower($schedule->khotib_name) }}">
                                 <td>{{ $index + 1 }}</td>
                                 <td class="fw-semibold">{{ $schedule->khotib_name }}</td>
                                 <td>{{ $schedule->bilal ?? 'Bp. Adi' }}</td>
@@ -69,6 +74,42 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <script>
+                (function () {
+                    const input = document.getElementById('khotib-search');
+                    const tbody = document.getElementById('khotib-table-body');
+                    if (!input || !tbody) return;
+
+                    const rows = Array.from(tbody.querySelectorAll('tr[data-khotib]'));
+                    const emptyRow = tbody.querySelector('tr:not([data-khotib])');
+
+                    const filterRows = () => {
+                        const query = input.value.trim().toLowerCase();
+                        let visibleCount = 0;
+
+                        rows.forEach((row) => {
+                            const name = row.getAttribute('data-khotib') || '';
+                            const match = query === '' || name.includes(query);
+                            row.style.display = match ? '' : 'none';
+                            if (match) visibleCount += 1;
+                        });
+
+                        if (emptyRow) {
+                            emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+                        }
+                    };
+
+                    input.addEventListener('input', filterRows);
+                    filterRows();
+                })();
+            </script>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('admin.khotib-schedules.create') }}" class="btn btn-success btn-sm">Tambah Jadwal</a>
+                <form method="POST" action="{{ route('admin.logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                </form>
             </div>
         </div>
     </div>

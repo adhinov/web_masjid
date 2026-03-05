@@ -7,7 +7,8 @@ use App\Http\Controllers\Admin\KhotibScheduleController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::view('/beranda', 'frontend.beranda');
-Route::get('/agenda', [HomeController::class, 'agenda'])->name('agenda');
+Route::get("/khotib-jum'at", [HomeController::class, 'agenda'])->name('khotib.jumat');
+Route::redirect('/agenda', "/khotib-jum'at");
 Route::get('/kalender-hijriyah', [HomeController::class, 'hijriCalendar'])->name('hijri.calendar');
 Route::redirect('/jadwal-sholat', '/kalender-hijriyah');
 

@@ -10,17 +10,24 @@ use Illuminate\Validation\ValidationException;
 
 class KhotibScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = KhotibSchedule::query()
-            ->get()
+        $query = KhotibSchedule::query();
+        $search = trim($request->query('q', ''));
+
+        if ($search !== '') {
+            $searchLower = mb_strtolower($search);
+            $query->whereRaw('LOWER(khotib_name) LIKE ?', ['%' . $searchLower . '%']);
+        }
+
+        $schedules = $query->get()
             ->sortBy(function (KhotibSchedule $schedule) {
                 $dates = $schedule->khutbah_dates ?? [];
                 return $dates ? min($dates) : '9999-12-31';
             })
             ->values();
 
-        return view('admin.khotib-schedules.index', compact('schedules'));
+        return view('admin.khotib-schedules.index', compact('schedules', 'search'));
     }
 
     public function create()

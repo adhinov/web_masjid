@@ -31,7 +31,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-text" href="{{ route('agenda') }}">Agenda</a>
+                    <a class="nav-link menu-text" href="{{ route('khotib.jumat') }}">Khotib Jum'at</a>
                 </li>
 
                 <li class="nav-item">

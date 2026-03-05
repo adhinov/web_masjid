@@ -398,6 +398,131 @@ footer {
     }
 }
 
+.agenda-card {
+    overflow: hidden;
+}
+
+.agenda-header {
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #d6f0df 0%, #eef8f2 100%);
+    border-bottom: 1px solid #cfe2d6;
+}
+
+.agenda-header-title {
+    font-size: 1.35rem;
+    color: #1e7e34;
+    letter-spacing: 0.6px;
+}
+
+.agenda-header-subtitle {
+    font-size: 1.05rem;
+    color: #1f2937;
+}
+
+.agenda-salam {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.agenda-info {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.agenda-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.agenda-info-plain .agenda-item {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.agenda-item-highlight {
+    border-color: #b8d6c1;
+    background: #f1faf4;
+}
+
+.agenda-emoji {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.agenda-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.agenda-value {
+    font-size: 1rem;
+    color: #111827;
+}
+
+.agenda-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f59e0b;
+    color: #1f2937;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.agenda-infaq {
+    padding: 16px;
+    border-radius: 12px;
+    background: #f7fbf8;
+    border: 1px solid #e0ece4;
+}
+
+.agenda-maps {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1e7e34;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.agenda-maps:hover {
+    background: #17632a;
+    color: #fff;
+    text-decoration: none;
+}
+
+.agenda-note {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .agenda-header-title {
+        font-size: 1.15rem;
+    }
+
+    .agenda-header-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .agenda-value {
+        font-size: 0.95rem;
+    }
+
+    .agenda-label {
+        font-size: 0.8rem;
+    }
+}
+
 
 .holiday-dot {
     position: absolute;
