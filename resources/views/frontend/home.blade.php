@@ -250,9 +250,9 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCountdown();              // panggil pertama kali
     setInterval(updateCountdown, 1000);
 
-    if (!getNextPrayer().nextPrayer) {
+    setTimeout(() => {
         fetchPrayerTimesClient();
-    }
+    }, 300);
 
     fetchHijriDateClient();
 

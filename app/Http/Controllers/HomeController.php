@@ -34,7 +34,7 @@ class HomeController extends Controller
                 $url = "https://api.aladhan.com/v1/timings/{$today}";
 
                 // Primary: Laravel HTTP client
-                $api = Http::timeout(8)
+                $api = Http::timeout(4)
                     ->acceptJson()
                     ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
                     ->get($url, [
@@ -46,27 +46,14 @@ class HomeController extends Controller
 
                 if ($api->ok()) {
                     $response = $api->json();
-                } else {
-                    // Fallback: file_get_contents (in case HTTP client fails on server)
-                    $query = http_build_query([
-                        'latitude'  => $latitude,
-                        'longitude' => $longitude,
-                        'method'    => $method,
-                        'timezone'  => 'Asia/Jakarta'
-                    ]);
-                    $context = stream_context_create([
-                        'http' => [
-                            'timeout' => 8,
-                            'header'  => "User-Agent: Mozilla/5.0\r\nAccept: application/json\r\n"
-                        ]
-                    ]);
-                    $raw = @file_get_contents($url . '?' . $query, false, $context);
-                    $response = $raw ? json_decode($raw, true) : null;
                 }
 
                 if (is_array($response)) {
                     Cache::put($cacheKey, $response, $cacheTtl);
-                    Cache::put($fallbackKey, $response, 86400 * 7);
+                    Cache::put($fallbackKey, [
+                        'date' => $todayCarbon->format('Y-m-d'),
+                        'payload' => $response,
+                    ], 86400 * 7);
                 }
             } catch (\Throwable $e) {
                 $response = null;
@@ -74,7 +61,10 @@ class HomeController extends Controller
         }
 
         if (!is_array($response)) {
-            $response = Cache::get($fallbackKey);
+            $fallback = Cache::get($fallbackKey);
+            if (is_array($fallback) && ($fallback['date'] ?? null) === $todayCarbon->format('Y-m-d')) {
+                $response = $fallback['payload'] ?? null;
+            }
         }
 
         if (!is_array($response) || !isset($response['data']['timings'])) {
@@ -108,29 +98,7 @@ class HomeController extends Controller
                            $response['data']['date']['hijri']['month']['en'] . ' ' .
                            $response['data']['date']['hijri']['year'] . ' H';
 
-        try {
-            $hijriCacheKey = 'hijri_home_' . $todayCarbon->format('Y-m-d');
-            $cachedHijri = Cache::get($hijriCacheKey);
-            if (is_string($cachedHijri)) {
-                $tanggalHijriyah = $cachedHijri;
-            } else {
-                $hijriDate = $todayCarbon->copy()->addDays($hijriOffsetDays)->format('d-m-Y');
-                $hijriApi = Http::timeout(6)
-                    ->acceptJson()
-                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                    ->get('https://api.aladhan.com/v1/gToH', [
-                        'date' => $hijriDate,
-                    ]);
-
-                if ($hijriApi->ok() && isset($hijriApi['data']['hijri'])) {
-                    $h = $hijriApi['data']['hijri'];
-                    $tanggalHijriyah = $h['day'] . ' ' . $h['month']['en'] . ' ' . $h['year'] . ' H';
-                    Cache::put($hijriCacheKey, $tanggalHijriyah, $cacheTtl);
-                }
-            }
-        } catch (\Throwable $e) {
-            // keep fallback hijri date from timings
-        }
+        // Hijri label will be refreshed on client-side for speed/accuracy
 
         return view('frontend.home', compact('jadwal', 'tanggalHijriyah'));
     }
