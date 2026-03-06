@@ -24,13 +24,17 @@ class HomeController extends Controller
         $todayCarbon = Carbon::now('Asia/Jakarta');
         $today = $todayCarbon->format('d-m-Y');
 
-        // Cache per hari (86400 detik = 1 hari)
-        try {
-            $response = Cache::remember('jadwal_sholat_' . $today, 86400, function () use ($latitude, $longitude, $method, $today) {
+        $cacheKey = 'jadwal_sholat_' . $today;
+        $fallbackKey = 'jadwal_sholat_last_good';
+        $cacheTtl = $todayCarbon->copy()->addDay()->startOfDay()->diffInSeconds($todayCarbon);
+        $response = Cache::get($cacheKey);
+
+        if (!is_array($response)) {
+            try {
                 $url = "https://api.aladhan.com/v1/timings/{$today}";
 
                 // Primary: Laravel HTTP client
-                $api = Http::timeout(10)
+                $api = Http::timeout(8)
                     ->acceptJson()
                     ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
                     ->get($url, [
@@ -41,28 +45,36 @@ class HomeController extends Controller
                     ]);
 
                 if ($api->ok()) {
-                    return $api->json();
+                    $response = $api->json();
+                } else {
+                    // Fallback: file_get_contents (in case HTTP client fails on server)
+                    $query = http_build_query([
+                        'latitude'  => $latitude,
+                        'longitude' => $longitude,
+                        'method'    => $method,
+                        'timezone'  => 'Asia/Jakarta'
+                    ]);
+                    $context = stream_context_create([
+                        'http' => [
+                            'timeout' => 8,
+                            'header'  => "User-Agent: Mozilla/5.0\r\nAccept: application/json\r\n"
+                        ]
+                    ]);
+                    $raw = @file_get_contents($url . '?' . $query, false, $context);
+                    $response = $raw ? json_decode($raw, true) : null;
                 }
 
-                // Fallback: file_get_contents (in case HTTP client fails on server)
-                $query = http_build_query([
-                    'latitude'  => $latitude,
-                    'longitude' => $longitude,
-                    'method'    => $method,
-                    'timezone'  => 'Asia/Jakarta'
-                ]);
-                $context = stream_context_create([
-                    'http' => [
-                        'timeout' => 10,
-                        'header'  => "User-Agent: Mozilla/5.0\r\nAccept: application/json\r\n"
-                    ]
-                ]);
-                $raw = @file_get_contents($url . '?' . $query, false, $context);
+                if (is_array($response)) {
+                    Cache::put($cacheKey, $response, $cacheTtl);
+                    Cache::put($fallbackKey, $response, 86400 * 7);
+                }
+            } catch (\Throwable $e) {
+                $response = null;
+            }
+        }
 
-                return $raw ? json_decode($raw, true) : null;
-            });
-        } catch (\Throwable $e) {
-            $response = null;
+        if (!is_array($response)) {
+            $response = Cache::get($fallbackKey);
         }
 
         if (!is_array($response) || !isset($response['data']['timings'])) {
@@ -97,17 +109,24 @@ class HomeController extends Controller
                            $response['data']['date']['hijri']['year'] . ' H';
 
         try {
-            $hijriDate = $todayCarbon->copy()->addDays($hijriOffsetDays)->format('d-m-Y');
-            $hijriApi = Http::timeout(8)
-                ->acceptJson()
-                ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
-                ->get('https://api.aladhan.com/v1/gToH', [
-                    'date' => $hijriDate,
-                ]);
+            $hijriCacheKey = 'hijri_home_' . $todayCarbon->format('Y-m-d');
+            $cachedHijri = Cache::get($hijriCacheKey);
+            if (is_string($cachedHijri)) {
+                $tanggalHijriyah = $cachedHijri;
+            } else {
+                $hijriDate = $todayCarbon->copy()->addDays($hijriOffsetDays)->format('d-m-Y');
+                $hijriApi = Http::timeout(6)
+                    ->acceptJson()
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                    ->get('https://api.aladhan.com/v1/gToH', [
+                        'date' => $hijriDate,
+                    ]);
 
-            if ($hijriApi->ok() && isset($hijriApi['data']['hijri'])) {
-                $h = $hijriApi['data']['hijri'];
-                $tanggalHijriyah = $h['day'] . ' ' . $h['month']['en'] . ' ' . $h['year'] . ' H';
+                if ($hijriApi->ok() && isset($hijriApi['data']['hijri'])) {
+                    $h = $hijriApi['data']['hijri'];
+                    $tanggalHijriyah = $h['day'] . ' ' . $h['month']['en'] . ' ' . $h['year'] . ' H';
+                    Cache::put($hijriCacheKey, $tanggalHijriyah, $cacheTtl);
+                }
             }
         } catch (\Throwable $e) {
             // keep fallback hijri date from timings

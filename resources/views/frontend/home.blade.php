@@ -192,6 +192,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    const hijriMonthMap = {
+        "Muharram": "Muharram",
+        "Safar": "Safar",
+        "Rabi' al-Awwal": "Rabiul Awal",
+        "Rabi' al-Thani": "Rabiul Akhir",
+        "Jumada al-Ula": "Jumadil Awal",
+        "Jumada al-Akhirah": "Jumadil Akhir",
+        "Rajab": "Rajab",
+        "Sha'ban": "Syaban",
+        "Ramadan": "Ramadan",
+        "Shawwal": "Syawal",
+        "Dhul-Qa'dah": "Zulkaidah",
+        "Dhul-Hijjah": "Zulhijah",
+    };
+
     async function fetchHijriDateClient() {
         try {
             if (!hijriEl) return;
@@ -204,7 +219,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await res.json();
             const h = data?.data?.hijri;
             if (!h) return;
-            hijriEl.innerText = `${h.day} ${h.month.en} ${h.year} H`;
+            const month = hijriMonthMap[h.month.en] || h.month.en;
+            hijriEl.innerText = `${h.day} ${month} ${h.year} H`;
         } catch (e) {
             // silent fallback
         }
@@ -239,6 +255,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     fetchHijriDateClient();
+
+    function scheduleMidnightRefresh() {
+        const now = new Date();
+        const nextMidnight = new Date(now);
+        nextMidnight.setHours(24, 0, 5, 0);
+        const delay = nextMidnight - now;
+        setTimeout(() => {
+            fetchPrayerTimesClient();
+            fetchHijriDateClient();
+            scheduleMidnightRefresh();
+        }, delay);
+    }
+
+    scheduleMidnightRefresh();
 
 });
 </script>
