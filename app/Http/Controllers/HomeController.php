@@ -21,7 +21,7 @@ class HomeController extends Controller
         $hijriOffsetDays = -1;
 
         // Format tanggal hari ini
-        $todayCarbon = Carbon::now();
+        $todayCarbon = Carbon::now('Asia/Jakarta');
         $today = $todayCarbon->format('d-m-Y');
 
         // Cache per hari (86400 detik = 1 hari)
@@ -123,7 +123,7 @@ class HomeController extends Controller
         $method = 11;
         $offsetDays = -1;
 
-        $now = Carbon::now();
+        $now = Carbon::now('Asia/Jakarta');
         Carbon::setLocale('id');
 
         $requestedYear = (int) $request->query('year', (int) $now->year);
