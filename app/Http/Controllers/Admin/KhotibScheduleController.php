@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminActivityLog;
 use App\Models\KhotibSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class KhotibScheduleController extends Controller
@@ -119,7 +121,9 @@ class KhotibScheduleController extends Controller
     {
         $data = $this->validateRequest($request);
 
-        KhotibSchedule::create($data);
+        $schedule = KhotibSchedule::create($data);
+
+        $this->logActivity('khotib_schedule_created', $request, $schedule);
 
         return redirect()
             ->route('admin.khotib-schedules.index')
@@ -139,6 +143,8 @@ class KhotibScheduleController extends Controller
 
         $khotibSchedule->update($data);
 
+        $this->logActivity('khotib_schedule_updated', $request, $khotibSchedule);
+
         return redirect()
             ->route('admin.khotib-schedules.index')
             ->with('success', 'Jadwal khotib berhasil diperbarui.');
@@ -148,9 +154,25 @@ class KhotibScheduleController extends Controller
     {
         $khotibSchedule->delete();
 
+        $this->logActivity('khotib_schedule_deleted', request(), $khotibSchedule);
+
         return redirect()
             ->route('admin.khotib-schedules.index')
             ->with('success', 'Jadwal khotib berhasil dihapus.');
+    }
+
+    private function logActivity(string $action, Request $request, ?KhotibSchedule $schedule = null): void
+    {
+        $user = Auth::user();
+
+        AdminActivityLog::create([
+            'user_id' => $user?->id,
+            'action' => $action,
+            'subject_type' => $schedule ? KhotibSchedule::class : null,
+            'subject_id' => $schedule?->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => (string) $request->userAgent(),
+        ]);
     }
 
     private function validateRequest(Request $request): array

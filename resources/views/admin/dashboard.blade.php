@@ -10,6 +10,13 @@
                 <div>
                     <h2 class="text-masjid fw-semibold mb-1">Dashboard Admin</h2>
                     <p class="text-muted mb-0">Selamat datang, {{ auth()->user()->name ?? 'Admin' }}.</p>
+                    @php
+                        $lastLogin = auth()->user()?->last_login_at;
+                        $lastLoginLabel = $lastLogin
+                            ? \Carbon\Carbon::parse($lastLogin)->translatedFormat('l, d F Y H:i') . ' WIB'
+                            : '-';
+                    @endphp
+                    <p class="text-muted mb-0">Last Login: {{ $lastLoginLabel }}</p>
                 </div>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
