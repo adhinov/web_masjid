@@ -26,6 +26,7 @@
             <hr class="my-3">
             <div class="d-flex flex-column flex-md-row gap-2">
                 <a href="{{ route('admin.khotib-schedules.index') }}" class="btn btn-success">Kelola Jadwal Khotib</a>
+                <a href="{{ route('admin.activity-logs.index') }}" class="btn btn-outline-secondary">Lihat Log Aktivitas</a>
                 <span class="text-muted align-self-center">Halaman ini siap diisi fitur pengelolaan agenda & pengumuman.</span>
             </div>
         </div>
