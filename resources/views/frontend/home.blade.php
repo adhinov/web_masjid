@@ -39,7 +39,7 @@
 
                     @php
                         \Carbon\Carbon::setLocale('id');
-                        $tanggalMasehi = \Carbon\Carbon::now()->translatedFormat('l, d F Y');
+                        $tanggalMasehi = \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y');
                     @endphp
 
                     <p class="text-center fw-semibold mb-3 prayer-heading">
