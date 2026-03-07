@@ -422,7 +422,16 @@ class HomeController extends Controller
         Carbon::setLocale('id');
 
         $targetFriday = $now->copy();
-        if (!$targetFriday->isFriday()) {
+        $cutoff = $now->copy()->next(Carbon::THURSDAY)->setTime(12, 0, 0);
+
+        if ($now->lt($cutoff)) {
+            // Before Thursday 12:00 WIB, keep showing last Friday
+            $targetFriday = $now->copy()->previous(Carbon::FRIDAY);
+            if ($now->isFriday()) {
+                $targetFriday = $now->copy();
+            }
+        } else {
+            // After Thursday 12:00 WIB, show next Friday
             $targetFriday->next(Carbon::FRIDAY);
         }
         $scheduleMap = $this->buildKhotibScheduleMap();
