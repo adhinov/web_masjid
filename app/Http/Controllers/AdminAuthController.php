@@ -26,6 +26,7 @@ class AdminAuthController extends Controller
 
             $user = Auth::user();
             if ($user) {
+                $user->previous_login_at = $user->last_login_at;
                 $user->last_login_at = Carbon::now('Asia/Jakarta');
                 $user->save();
 

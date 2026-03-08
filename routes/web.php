@@ -23,5 +23,7 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 Route::middleware('auth')->group(function () {
     Route::view('/admin/dashboard', 'admin.dashboard')->name('admin.dashboard');
     Route::resource('/admin/khotib-schedules', KhotibScheduleController::class)->names('admin.khotib-schedules')->except(['show']);
+    Route::get('/admin/khotib-schedules/download', [KhotibScheduleController::class, 'downloadPlainText'])->name('admin.khotib-schedules.download');
     Route::get('/admin/activity-logs', [AdminActivityLogController::class, 'index'])->name('admin.activity-logs.index');
+    Route::get('/admin/activity-logs/download', [AdminActivityLogController::class, 'downloadPlainText'])->name('admin.activity-logs.download');
 });

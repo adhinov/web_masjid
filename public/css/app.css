@@ -503,6 +503,37 @@ footer {
     min-width: 260px;
 }
 
+/* ===============================
+   ADMIN KHOTIB TABLE (MOBILE)
+================================= */
+
+@media (max-width: 576px) {
+    .khotib-table {
+        font-size: 0.85rem;
+    }
+
+    .khotib-table th,
+    .khotib-table td {
+        white-space: nowrap;
+        padding: 0.35rem 0.4rem;
+        line-height: 1.25;
+    }
+
+    .khotib-dates {
+        padding-left: 0 !important;
+    }
+
+    .khotib-dates li {
+        display: block;
+        white-space: nowrap;
+        margin-bottom: 2px;
+    }
+
+    .khotib-dates li:last-child {
+        margin-bottom: 0;
+    }
+}
+
 .agenda-note {
     margin-top: 12px;
     font-size: 0.85rem;

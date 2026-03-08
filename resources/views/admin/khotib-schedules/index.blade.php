@@ -41,7 +41,7 @@
             @endphp
 
             <div class="table-responsive mt-3">
-                <table class="table table-bordered table-sm align-middle">
+                <table class="table table-bordered table-sm align-middle khotib-table">
                     <thead class="table-light">
                         <tr>
                             <th style="width: 40px;">No</th>
@@ -66,7 +66,7 @@
                                     @if (empty($dates))
                                         <span class="text-muted">-</span>
                                     @else
-                                        <ul class="mb-0 ps-3">
+                                        <ul class="mb-0 ps-3 khotib-dates">
                                             @foreach ($dates as $date)
                                                 @php
                                                     try {
@@ -152,6 +152,10 @@
             </script>
             <div class="d-flex justify-content-end gap-2 mt-3">
                 <a href="{{ route('admin.khotib-schedules.create') }}" class="btn btn-success btn-sm">Tambah Jadwal</a>
+                <a href="{{ route('admin.khotib-schedules.download', array_filter(['q' => $search ?? null])) }}"
+                   class="btn btn-outline-success btn-sm">
+                    Download Jadwal
+                </a>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>

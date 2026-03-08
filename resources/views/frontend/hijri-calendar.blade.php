@@ -44,7 +44,7 @@
                         </div>
                         <div class="calendar-grid" id="calendar-grid">
                             @php
-                                $now = \Carbon\Carbon::now();
+                                $now = \Carbon\Carbon::now('Asia/Jakarta');
                                 $firstDay = $displayDate->copy()->startOfMonth();
                                 $daysInMonth = $displayDate->daysInMonth;
                                 $startWeekday = $firstDay->dayOfWeek; // 0 = Ahad

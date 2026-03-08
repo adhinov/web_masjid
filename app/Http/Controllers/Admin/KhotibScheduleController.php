@@ -16,100 +16,54 @@ class KhotibScheduleController extends Controller
     {
         Carbon::setLocale('id');
         $search = trim($request->query('q', ''));
-        $searchLower = mb_strtolower($search);
-
-        $monthMapId = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-        $monthMapEn = [
-            1 => 'January',
-            2 => 'February',
-            3 => 'March',
-            4 => 'April',
-            5 => 'May',
-            6 => 'June',
-            7 => 'July',
-            8 => 'August',
-            9 => 'September',
-            10 => 'October',
-            11 => 'November',
-            12 => 'December',
-        ];
-
-        $monthAlias = [
-            'january' => 'januari',
-            'february' => 'februari',
-            'march' => 'maret',
-            'april' => 'april',
-            'may' => 'mei',
-            'june' => 'juni',
-            'july' => 'juli',
-            'august' => 'agustus',
-            'september' => 'september',
-            'october' => 'oktober',
-            'november' => 'november',
-            'december' => 'desember',
-        ];
-
-        if (isset($monthAlias[$searchLower])) {
-            $searchLower = $monthAlias[$searchLower];
-        }
-
-        $schedules = KhotibSchedule::all()
-            ->map(function (KhotibSchedule $schedule) use ($monthMapId, $monthMapEn) {
-                $dates = $schedule->khutbah_dates ?? [];
-                $months = collect($dates)
-                    ->map(function ($date) use ($monthMapId, $monthMapEn) {
-                        try {
-                            $month = Carbon::createFromFormat('Y-m-d', $date)->month;
-                            $monthId = $monthMapId[$month] ?? null;
-                            $monthEn = $monthMapEn[$month] ?? null;
-                            return trim(($monthId ?? '') . ' ' . ($monthEn ?? '')) ?: null;
-                        } catch (\Throwable $e) {
-                            return null;
-                        }
-                    })
-                    ->filter()
-                    ->unique()
-                    ->values()
-                    ->all();
-
-                $tokens = strtolower(trim($schedule->khotib_name . ' ' . implode(' ', $months)));
-                $schedule->setAttribute('search_tokens', $tokens);
-
-                return $schedule;
-            });
-
-        if ($searchLower !== '') {
-            $schedules = $schedules->filter(function (KhotibSchedule $schedule) use ($searchLower) {
-                $tokens = $schedule->getAttribute('search_tokens') ?? '';
-                return str_contains($tokens, $searchLower);
-            });
-        }
-
-        $schedules = $schedules
-            ->sortBy(function (KhotibSchedule $schedule) {
-                $dates = $schedule->khutbah_dates ?? [];
-                return $dates ? min($dates) : '9999-12-31';
-            })
-            ->values();
+        [$schedules, $monthMapId] = $this->buildScheduleCollection($search);
 
         return view('admin.khotib-schedules.index', [
             'schedules' => $schedules,
             'search' => $search,
             'monthMapId' => $monthMapId,
         ]);
+    }
+
+    public function downloadPlainText(Request $request)
+    {
+        Carbon::setLocale('id');
+        $search = trim($request->query('q', ''));
+        [$schedules, $monthMapId] = $this->buildScheduleCollection($search);
+
+        $rows = [];
+        foreach ($schedules as $index => $schedule) {
+            $dates = $schedule->khutbah_dates ?? [];
+            $dateLabels = collect($dates)
+                ->map(function ($date) use ($monthMapId) {
+                    try {
+                        $dateObj = Carbon::createFromFormat('Y-m-d', $date);
+                        $monthName = $monthMapId[$dateObj->month] ?? $dateObj->translatedFormat('F');
+                        return sprintf('%02d %s %d', $dateObj->day, $monthName, $dateObj->year);
+                    } catch (\Throwable $e) {
+                        return $date;
+                    }
+                })
+                ->values()
+                ->all();
+
+            $rows[] = [
+                'No' => (string) ($index + 1),
+                'Nama Khotib' => (string) $schedule->khotib_name,
+                'Bilal' => (string) ($schedule->bilal ?? 'Bp. Adi'),
+                'Tanggal Khutbah' => $dateLabels ? implode('; ', $dateLabels) : '-',
+                'Keterangan' => (string) ($schedule->notes ?? '-'),
+            ];
+        }
+
+        $content = $this->renderPlainTextTable($rows, $search);
+        $filename = $search !== ''
+            ? 'jadwal-khotib-jumat-filter.txt'
+            : 'jadwal-khotib-jumat.txt';
+
+        return response($content)
+            ->header('Content-Type', 'text/plain; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function create()
@@ -221,5 +175,175 @@ class KhotibScheduleController extends Controller
         sort($dates);
 
         return $dates;
+    }
+
+    private function buildScheduleCollection(string $search): array
+    {
+        $searchLower = mb_strtolower($search);
+
+        $monthMapId = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+        $monthMapEn = [
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December',
+        ];
+
+        $monthAlias = [
+            'january' => 'januari',
+            'february' => 'februari',
+            'march' => 'maret',
+            'april' => 'april',
+            'may' => 'mei',
+            'june' => 'juni',
+            'july' => 'juli',
+            'august' => 'agustus',
+            'september' => 'september',
+            'october' => 'oktober',
+            'november' => 'november',
+            'december' => 'desember',
+        ];
+
+        if (isset($monthAlias[$searchLower])) {
+            $searchLower = $monthAlias[$searchLower];
+        }
+
+        $schedules = KhotibSchedule::all()
+            ->map(function (KhotibSchedule $schedule) use ($monthMapId, $monthMapEn) {
+                $dates = $schedule->khutbah_dates ?? [];
+                $months = collect($dates)
+                    ->map(function ($date) use ($monthMapId, $monthMapEn) {
+                        try {
+                            $month = Carbon::createFromFormat('Y-m-d', $date)->month;
+                            $monthId = $monthMapId[$month] ?? null;
+                            $monthEn = $monthMapEn[$month] ?? null;
+                            return trim(($monthId ?? '') . ' ' . ($monthEn ?? '')) ?: null;
+                        } catch (\Throwable $e) {
+                            return null;
+                        }
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                $tokens = strtolower(trim($schedule->khotib_name . ' ' . implode(' ', $months)));
+                $schedule->setAttribute('search_tokens', $tokens);
+
+                return $schedule;
+            });
+
+        if ($searchLower !== '') {
+            $schedules = $schedules->filter(function (KhotibSchedule $schedule) use ($searchLower) {
+                $tokens = $schedule->getAttribute('search_tokens') ?? '';
+                return str_contains($tokens, $searchLower);
+            });
+        }
+
+        $schedules = $schedules
+            ->sortBy(function (KhotibSchedule $schedule) {
+                $dates = $schedule->khutbah_dates ?? [];
+                return $dates ? min($dates) : '9999-12-31';
+            })
+            ->values();
+
+        return [$schedules, $monthMapId];
+    }
+
+    private function renderPlainTextTable(array $rows, string $search): string
+    {
+        $headers = ['No', 'Nama Khotib', 'Bilal', 'Tanggal Khutbah', 'Keterangan'];
+        $caps = [
+            'No' => 3,
+            'Nama Khotib' => 24,
+            'Bilal' => 16,
+            'Tanggal Khutbah' => 60,
+            'Keterangan' => 24,
+        ];
+
+        $widths = [];
+        foreach ($headers as $header) {
+            $widths[$header] = min($caps[$header], strlen($header));
+        }
+
+        foreach ($rows as $row) {
+            foreach ($headers as $header) {
+                $value = $row[$header] ?? '';
+                $widths[$header] = min(
+                    $caps[$header],
+                    max($widths[$header], strlen($value))
+                );
+            }
+        }
+
+        $line = '+';
+        foreach ($headers as $header) {
+            $line .= str_repeat('-', $widths[$header] + 2) . '+';
+        }
+
+        $out = [];
+        $title = $search !== ''
+            ? 'Jadwal Khotib Jumat (Filter: ' . $search . ')'
+            : 'Jadwal Khotib Jumat';
+        $downloadedAt = Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y H:i') . ' WIB';
+        $out[] = $title;
+        $out[] = 'Tanggal Download: ' . $downloadedAt;
+        $out[] = $line;
+
+        $headerRow = '|';
+        foreach ($headers as $header) {
+            $headerRow .= ' ' . $this->padCell($header, $widths[$header]) . ' |';
+        }
+        $out[] = $headerRow;
+        $out[] = $line;
+
+        if (empty($rows)) {
+            $empty = '| ' . $this->padCell('Tidak ada data.', array_sum($widths) + (count($headers) * 3) - 3) . ' |';
+            $out[] = $empty;
+            $out[] = $line;
+            return implode(PHP_EOL, $out) . PHP_EOL;
+        }
+
+        foreach ($rows as $row) {
+            $rowLine = '|';
+            foreach ($headers as $header) {
+                $value = $row[$header] ?? '';
+                $rowLine .= ' ' . $this->padCell($value, $widths[$header]) . ' |';
+            }
+            $out[] = $rowLine;
+        }
+        $out[] = $line;
+
+        return implode(PHP_EOL, $out) . PHP_EOL;
+    }
+
+    private function padCell(string $value, int $width): string
+    {
+        if (strlen($value) > $width) {
+            $value = substr($value, 0, max(0, $width - 3)) . '...';
+        }
+
+        return str_pad($value, $width, ' ');
     }
 }
