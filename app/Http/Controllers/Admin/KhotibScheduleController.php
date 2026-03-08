@@ -51,7 +51,7 @@ class KhotibScheduleController extends Controller
                 'No' => (string) ($index + 1),
                 'Nama Khotib' => (string) $schedule->khotib_name,
                 'Bilal' => (string) ($schedule->bilal ?? 'Bp. Adi'),
-                'Tanggal Khutbah' => $dateLabels ? implode('; ', $dateLabels) : '-',
+                'Tanggal Khutbah' => $dateLabels ?: ['-'],
                 'Keterangan' => (string) ($schedule->notes ?? '-'),
             ];
         }
@@ -276,9 +276,9 @@ class KhotibScheduleController extends Controller
         $headers = ['No', 'Nama Khotib', 'Bilal', 'Tanggal Khutbah', 'Keterangan'];
         $caps = [
             'No' => 3,
-            'Nama Khotib' => 24,
+            'Nama Khotib' => 40,
             'Bilal' => 16,
-            'Tanggal Khutbah' => 60,
+            'Tanggal Khutbah' => 28,
             'Keterangan' => 24,
         ];
 
@@ -290,9 +290,18 @@ class KhotibScheduleController extends Controller
         foreach ($rows as $row) {
             foreach ($headers as $header) {
                 $value = $row[$header] ?? '';
+                if ($header === 'Tanggal Khutbah' && is_array($value)) {
+                    foreach ($value as $dateLine) {
+                        $widths[$header] = min(
+                            $caps[$header],
+                            max($widths[$header], strlen($dateLine))
+                        );
+                    }
+                    continue;
+                }
                 $widths[$header] = min(
                     $caps[$header],
-                    max($widths[$header], strlen($value))
+                    max($widths[$header], strlen((string) $value))
                 );
             }
         }
@@ -326,14 +335,26 @@ class KhotibScheduleController extends Controller
         }
 
         foreach ($rows as $row) {
-            $rowLine = '|';
-            foreach ($headers as $header) {
-                $value = $row[$header] ?? '';
-                $rowLine .= ' ' . $this->padCell($value, $widths[$header]) . ' |';
+            $dateLines = $row['Tanggal Khutbah'] ?? ['-'];
+            if (!is_array($dateLines) || empty($dateLines)) {
+                $dateLines = ['-'];
             }
-            $out[] = $rowLine;
+
+            $lineCount = count($dateLines);
+            for ($i = 0; $i < $lineCount; $i++) {
+                $rowLine = '|';
+                foreach ($headers as $header) {
+                    if ($header === 'Tanggal Khutbah') {
+                        $value = $dateLines[$i] ?? '';
+                    } else {
+                        $value = $i === 0 ? ($row[$header] ?? '') : '';
+                    }
+                    $rowLine .= ' ' . $this->padCell((string) $value, $widths[$header]) . ' |';
+                }
+                $out[] = $rowLine;
+            }
+            $out[] = $line;
         }
-        $out[] = $line;
 
         return implode(PHP_EOL, $out) . PHP_EOL;
     }
