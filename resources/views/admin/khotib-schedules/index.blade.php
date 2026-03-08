@@ -3,9 +3,9 @@
 @section('title', 'Jadwal Khotib Jumat')
 
 @section('content')
-<div class="container my-4">
+<div class="container my-4 khotib-page">
     <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+        <div class="card-body p-4 khotib-card-body">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                 <div>
                     <h2 class="text-masjid fw-semibold mb-1">Jadwal Khotib Jumat</h2>

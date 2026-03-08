@@ -41,7 +41,7 @@
                     </form>
 
                     <p class="text-muted small-text text-center mt-3 mb-0">
-                        Lupa password? Hubungi pengurus.
+                        Lupa password? Hubungi Web Admin.
                     </p>
                 </div>
             </div>

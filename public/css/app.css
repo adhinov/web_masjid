@@ -504,6 +504,39 @@ footer {
 }
 
 /* ===============================
+   ADMIN KHOTIB PAGE SPACING
+================================= */
+
+.khotib-page {
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+}
+
+.khotib-card-body {
+    padding-top: 8px !important;
+    padding-bottom: 10px !important;
+}
+
+@media (max-width: 576px) {
+    .khotib-card-body {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+
+    .khotib-card-body .mb-1 {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .khotib-card-body .mb-0 {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .khotib-card-body .mt-3 {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* ===============================
    ADMIN KHOTIB TABLE (MOBILE)
 ================================= */
 
@@ -539,6 +572,132 @@ footer {
     font-size: 0.85rem;
     color: #6b7280;
     text-align: center;
+}
+
+/* ===============================
+   AGENDA MAINTENANCE
+================================= */
+
+.agenda-maintenance .card-body {
+    padding-top: 12px !important;
+    padding-bottom: 18px !important;
+}
+
+.zakat-card {
+    background: #e9ecef;
+    border: 1px solid #dfe3e6;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.kajian-divider {
+    margin: 16px auto 12px;
+    height: 1px;
+    max-width: 520px;
+    background: linear-gradient(90deg, transparent, #d7e6da, transparent);
+}
+
+.kajian-section {
+    margin-top: 6px;
+}
+
+.kajian-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e7e34;
+    letter-spacing: 0.6px;
+}
+
+.kajian-subtitle {
+    margin-top: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #155d28;
+}
+
+.kajian-note {
+    margin-top: 2px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.kajian-header {
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.kajian-title {
+    text-align: center;
+}
+
+.kajian-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: #f8fbf9;
+    border: 1px solid #e1ede4;
+    border-radius: 10px;
+}
+
+.kajian-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+    padding: 4px 0;
+    align-items: start;
+}
+
+.kajian-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #5f6c62;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.kajian-value {
+    font-size: 0.95rem;
+    color: #1f2937;
+}
+
+.kajian-speakers {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.kajian-speakers li {
+    margin-bottom: 4px;
+}
+
+.kajian-separator {
+    margin: 10px auto;
+    max-width: 420px;
+    height: 1px;
+    background: #e5eee8;
+}
+
+@media (max-width: 576px) {
+    .agenda-maintenance .card-body {
+        padding-top: 10px !important;
+        padding-bottom: 14px !important;
+    }
+
+    .kajian-card {
+        padding: 10px 12px;
+    }
+
+    .kajian-row {
+        grid-template-columns: 92px 1fr;
+        gap: 8px;
+    }
+
+    .kajian-label {
+        font-size: 0.82rem;
+    }
+
+    .kajian-value {
+        font-size: 0.9rem;
+    }
 }
 
 .ramadhan-banner {
