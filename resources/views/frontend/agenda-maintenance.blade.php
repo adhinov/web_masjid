@@ -7,16 +7,22 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <div class="zakat-card">
-                <div class="text-center mb-3">
+                <div class="zakat-content mb-3">
                     <h2 class="text-masjid fw-semibold mb-2">ZAKAT FITRAH</h2>
-                    <p class="text-muted mb-0 fs-6">
-                        Panitia Zakat Fitrah Masjid Abi Musa Al Asy'ari saat ini sudah siap menerima serta menyalurkan
-                        Zakat Fitrah Anda. Ketentuan berapa nilai yang harus dibayar akan diinformasikan lebih lanjut,
-                        atau bisa langsung hubungi No Whatsapp berikut:
-                    </p>
+                    <div class="text-muted mb-0 fs-6">
+                        <p class="mb-2">
+                            Panitia Zakat Fitrah Masjid Abi Musa Al Asy'ari saat ini sudah siap menerima serta menyalurkan
+                            Zakat Fitrah Anda. Adapun nilai yang harus dibayar:
+                        </p>
+                        <ul class="zakat-list">
+                            <li>Rp. 50.000,- (per jiwa) atau</li>
+                            <li>3 1/2 liter Beras (per jiwa)</li>
+                        </ul>
+                        <div>Kontak yang bisa di hubungi:</div>
+                    </div>
                 </div>
 
-                <div class="d-flex justify-content-center">
+                <div class="d-flex">
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-whatsapp text-success fs-5"></i>
                         <a class="text-decoration-none fw-semibold" href="https://wa.me/628569022290" target="_blank" rel="noopener">

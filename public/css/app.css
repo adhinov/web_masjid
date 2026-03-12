@@ -590,6 +590,25 @@ footer {
     padding: 16px 18px;
 }
 
+.zakat-content {
+    text-align: left;
+}
+
+.online-badge {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.45rem;
+}
+
+.zakat-list {
+    margin: 0 0 8px;
+    padding-left: 18px;
+}
+
+.zakat-list li {
+    margin-bottom: 4px;
+}
+
 .kajian-divider {
     margin: 16px auto 12px;
     height: 1px;

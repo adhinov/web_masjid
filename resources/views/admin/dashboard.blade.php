@@ -8,7 +8,12 @@
         <div class="card-body p-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                 <div>
-                    <h2 class="text-masjid fw-semibold mb-1">Dashboard Admin</h2>
+                    <h2 class="text-masjid fw-semibold mb-1 d-flex align-items-center gap-2">
+                        Dashboard Admin
+                        <span class="badge bg-light text-primary border online-badge">
+                            Online: {{ $onlineCount ?? 0 }}
+                        </span>
+                    </h2>
                     <p class="text-muted mb-0">Selamat datang, {{ auth()->user()->name ?? 'Admin' }}.</p>
                     @php
                         $lastLogin = auth()->user()?->previous_login_at ?? auth()->user()?->last_login_at;
