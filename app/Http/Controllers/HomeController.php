@@ -422,7 +422,9 @@ class HomeController extends Controller
         Carbon::setLocale('id');
 
         $targetFriday = $now->copy();
-        $cutoff = $now->copy()->next(Carbon::THURSDAY)->setTime(12, 0, 0);
+        $cutoff = $now->isThursday()
+            ? $now->copy()->setTime(12, 0, 0)
+            : $now->copy()->next(Carbon::THURSDAY)->setTime(12, 0, 0);
 
         if ($now->lt($cutoff)) {
             // Before Thursday 12:00 WIB, keep showing last Friday
