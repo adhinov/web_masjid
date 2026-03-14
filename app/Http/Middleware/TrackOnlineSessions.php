@@ -23,12 +23,14 @@ class TrackOnlineSessions
         }
 
         try {
-            $sessionId = (string) $session->getId();
+            $ip = (string) $request->ip();
+            $ua = (string) $request->userAgent();
+            $key = sha1($ip . '|' . $ua);
 
-            if ($sessionId !== '') {
+            if ($key !== '') {
                 $now = now()->getTimestamp();
                 DB::table('online_sessions')->updateOrInsert(
-                    ['session_id' => $sessionId],
+                    ['session_id' => $key],
                     ['last_activity' => $now]
                 );
 

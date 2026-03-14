@@ -600,6 +600,12 @@ footer {
     padding: 0.2rem 0.45rem;
 }
 
+.online-refresh-btn {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    line-height: 1.2;
+}
+
 .zakat-list {
     margin: 0 0 8px;
     padding-left: 18px;

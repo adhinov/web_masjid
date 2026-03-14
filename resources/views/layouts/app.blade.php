@@ -31,6 +31,43 @@
 {{-- Bootstrap JS --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+    (function () {
+        const pingUrl = "{{ route('online.ping') }}";
+        const leaveUrl = "{{ route('online.leave') }}";
+
+        const ping = () => {
+            fetch(pingUrl, {
+                method: "POST",
+                headers: { "Accept": "application/json" },
+                keepalive: true
+            }).catch(() => {});
+        };
+
+        const leave = () => {
+            if (navigator.sendBeacon) {
+                const blob = new Blob([""], { type: "text/plain" });
+                navigator.sendBeacon(leaveUrl, blob);
+                return;
+            }
+            fetch(leaveUrl, { method: "POST", keepalive: true }).catch(() => {});
+        };
+
+        ping();
+        setInterval(ping, 5000);
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                leave();
+            } else {
+                ping();
+            }
+        });
+
+        window.addEventListener("pagehide", leave);
+    })();
+</script>
+
 @yield('scripts')
 
 </body>

@@ -10,12 +10,28 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
+        $onlineCount = $this->getOnlineCount();
+
+        return view('admin.dashboard', [
+            'onlineCount' => $onlineCount,
+        ]);
+    }
+
+    public function onlineCount()
+    {
+        return response()->json([
+            'online' => $this->getOnlineCount() ?? 0,
+        ]);
+    }
+
+    private function getOnlineCount(): ?int
+    {
         $onlineCount = null;
         $driver = config('session.driver');
 
-        // Count only recently active sessions to avoid stale "online" users.
-        $windowMinutes = 5;
-        $threshold = now()->subMinutes($windowMinutes)->getTimestamp();
+        // Count only very recent sessions so numbers drop quickly when users leave.
+        $windowSeconds = 5;
+        $threshold = now()->subSeconds($windowSeconds)->getTimestamp();
 
         try {
             $onlineCount = DB::table('online_sessions')
@@ -27,30 +43,28 @@ class AdminDashboardController extends Controller
 
         try {
             if ($onlineCount !== null) {
-                return view('admin.dashboard', [
-                    'onlineCount' => $onlineCount,
-                ]);
+                return $onlineCount;
             }
 
             if ($driver === 'database') {
                 $table = config('session.table', 'sessions');
-                $onlineCount = DB::table($table)
+                return DB::table($table)
                     ->where('last_activity', '>=', $threshold)
                     ->count();
-            } elseif ($driver === 'file') {
+            }
+
+            if ($driver === 'file') {
                 $path = (string) config('session.files', storage_path('framework/sessions'));
                 if ($path !== '' && File::isDirectory($path)) {
-                    $onlineCount = collect(File::files($path))
+                    return collect(File::files($path))
                         ->filter(fn ($file) => $file->getMTime() >= $threshold)
                         ->count();
                 }
             }
         } catch (\Throwable $e) {
-            $onlineCount = null;
+            return null;
         }
 
-        return view('admin.dashboard', [
-            'onlineCount' => $onlineCount,
-        ]);
+        return $onlineCount;
     }
 }
