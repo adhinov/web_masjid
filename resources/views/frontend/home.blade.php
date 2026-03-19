@@ -27,9 +27,6 @@
                     <p class="mb-2 hero-subtitle">
                         Pusat informasi kegiatan, jadwal sholat, dan layanan jemaah.
                     </p>
-                    <p class="mb-3 fw-semibold text-success fs-5 ramadhan-banner">
-                        Selamat Menunaikan Ibadah Puasa Ramadhan 1446 H
-                    </p>
 
                     <!-- Countdown -->
                     <div id="countdown" class="alert alert-success fw-bold py-2 countdown-box"></div>
