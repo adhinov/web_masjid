@@ -14,8 +14,8 @@
     {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    {{-- Custom CSS (tanpa Vite) --}}
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    {{-- Custom CSS --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="@yield('body-class')">

@@ -1,0 +1,993 @@
+/* ===============================
+   BASE TYPOGRAPHY
+================================= */
+
+html {
+    font-size: 14px; /* lebih kecil & profesional */
+}
+
+body {
+    font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* ===============================
+   BRAND COLORS
+================================= */
+
+.bg-masjid {
+    background-color: #1e7e34;
+}
+
+.text-masjid {
+    color: #1e7e34;
+}
+
+.btn-masjid {
+    background-color: #1e7e34;
+    color: #fff;
+}
+
+.btn-masjid:hover {
+    background-color: #16692b;
+    color: #fff;
+}
+
+/* ===============================
+   HEADING SCALE (Lebih Proporsional)
+================================= */
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* ===============================
+   NAVBAR
+================================= */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+
+body {
+    padding-top: 64px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* ===============================
+   ADMIN LOGIN FULL SCREEN FIT
+================================= */
+
+.admin-login-page main {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.admin-login-page .container.my-4 {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+.admin-login-page .card-body {
+    padding: 20px !important;
+}
+
+.admin-login-page footer .footer-wrapper {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.admin-login-page .footer-title {
+    font-size: 0.95rem;
+}
+
+.admin-login-page .footer-text {
+    font-size: 0.8rem;
+}
+
+.admin-login-page .footer-copy {
+    font-size: 0.75rem;
+}
+
+.navbar-brand {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.navbar .nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* ===============================
+   HERO / BERANDA SECTION
+================================= */
+
+.hero-title {
+    font-size: 1.45rem;
+    font-weight: 600;
+}
+
+.hero-subtitle {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.hero-date {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.hero-date-blue {
+    color: #0b2f6b;
+}
+
+.hero-logo {
+    max-height: 180px;
+}
+
+@media (min-width: 768px) {
+    .hero-logo {
+        margin-top: -6px;
+    }
+
+    .hero-logo-col {
+        transform: translateX(-16px);
+    }
+}
+
+.hero-row {
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 768px) {
+    .hero-row {
+        transform: translateX(-12px);
+    }
+}
+
+.hero-container {
+    margin-top: 12px !important;
+    margin-bottom: 12px !important;
+}
+
+@media (min-width: 768px) {
+    .hero-container .card-body {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+}
+
+/* ===============================
+   COUNTDOWN BOX
+================================= */
+
+.countdown-box {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ===============================
+   JADWAL SHOLAT (WAKTU CARD)
+================================= */
+
+.waktu-card {
+    background: #f4d03f;
+    color: #000;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.prayer-heading {
+    font-size: 0.95rem;
+}
+
+.prayer-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.prayer-time {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* ===============================
+   PRAYER TIME CARD
+================================= */
+
+.prayer-card {
+    font-size: 0.9rem;
+    padding: 12px;
+}
+
+.prayer-card .time {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.prayer-card .title {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ===============================
+   CARD GLOBAL
+================================= */
+
+.card {
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   HOME SECTIONS
+================================= */
+
+.masjid-photo {
+    width: 100%;
+    max-height: 380px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+}
+
+/* ===============================
+   FOOTER
+================================= */
+
+footer {
+    font-size: 0.85rem;
+    margin-top: auto;
+}
+
+.footer-title {
+    font-size: 1.05rem;
+}
+
+.footer-text {
+    font-size: 0.9rem;
+}
+
+.footer-copy {
+    font-size: 0.85rem;
+}
+
+/* ===============================
+   HIJRI CALENDAR
+================================= */
+
+.hijri-calendar {
+    background: #f8fafb;
+    border-radius: 12px;
+    border: 1.5px solid #d2dbe5;
+    padding: 10px;
+    margin-top: -10px;
+}
+
+.calendar-header,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.calendar-header {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #0b2f6b;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.calendar-cell {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1.5px solid #dbe3ec;
+    min-height: 64px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.calendar-cell.is-empty {
+    background: transparent;
+    border: none;
+}
+
+.calendar-cell.is-today {
+    border-color: #1e7e34;
+    box-shadow: 0 0 0 2px rgba(30, 126, 52, 0.12);
+}
+
+.greg-day {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+.hijri-day {
+    margin-top: 4px;
+    font-size: 0.95rem;
+    color: #1e7e34;
+}
+
+.hijri-month {
+    font-size: 0.95rem;
+}
+
+.calendar-nav {
+    font-size: 0.95rem;
+}
+
+.calendar-header-row {
+    margin-bottom: 26px !important;
+    margin-top: -6px;
+}
+
+.calendar-months {
+    line-height: 1.2;
+}
+
+.calendar-nav-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.calendar-nav-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1e7e34;
+}
+
+.agenda-subtitle {
+    font-size: 1rem !important;
+}
+
+@media (max-width: 768px) {
+    .agenda-subtitle {
+        font-size: 0.85rem !important;
+    }
+}
+
+.agenda-card {
+    overflow: hidden;
+}
+
+.agenda-header {
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #d6f0df 0%, #eef8f2 100%);
+    border-bottom: 1px solid #cfe2d6;
+}
+
+.agenda-header-title {
+    font-size: 1.35rem;
+    color: #1e7e34;
+    letter-spacing: 0.6px;
+}
+
+.agenda-header-subtitle {
+    font-size: 1.05rem;
+    color: #1f2937;
+}
+
+.agenda-salam {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.agenda-info {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.agenda-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.agenda-info-plain .agenda-item {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.agenda-item-highlight {
+    border-color: #b8d6c1;
+    background: #f1faf4;
+}
+
+.agenda-emoji {
+    font-size: 20px;
+    line-height: 1;
+    color: #1f2937;
+}
+
+.agenda-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.agenda-value {
+    font-size: 1rem;
+    color: #111827;
+}
+
+.agenda-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f59e0b;
+    color: #1f2937;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.agenda-infaq {
+    padding: 16px;
+    border-radius: 12px;
+    background: #f7fbf8;
+    border: 1px solid #e0ece4;
+}
+
+.agenda-maps {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1e7e34;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.agenda-maps:hover {
+    background: #17632a;
+    color: #fff;
+    text-decoration: none;
+}
+
+.search-input {
+    min-width: 260px;
+}
+
+/* ===============================
+   ADMIN KHOTIB PAGE SPACING
+================================= */
+
+.khotib-page {
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+}
+
+.khotib-card-body {
+    padding-top: 8px !important;
+    padding-bottom: 10px !important;
+}
+
+@media (max-width: 576px) {
+    .khotib-card-body {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+
+    .khotib-card-body .mb-1 {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .khotib-card-body .mb-0 {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .khotib-card-body .mt-3 {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* ===============================
+   ADMIN KHOTIB TABLE (MOBILE)
+================================= */
+
+@media (max-width: 576px) {
+    .khotib-table {
+        font-size: 0.85rem;
+    }
+
+    .khotib-table th,
+    .khotib-table td {
+        white-space: nowrap;
+        padding: 0.35rem 0.4rem;
+        line-height: 1.25;
+    }
+
+    .khotib-dates {
+        padding-left: 0 !important;
+    }
+
+    .khotib-dates li {
+        display: block;
+        white-space: nowrap;
+        margin-bottom: 2px;
+    }
+
+    .khotib-dates li:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.agenda-note {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+/* ===============================
+   AGENDA MAINTENANCE
+================================= */
+
+.agenda-maintenance .card-body {
+    padding-top: 6px !important;
+    padding-bottom: 16px !important;
+}
+
+.zakat-card {
+    background: #e9ecef;
+    border: 1px solid #dfe3e6;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.zakat-content {
+    text-align: left;
+}
+
+.online-badge {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.45rem;
+}
+
+.online-refresh-btn {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    line-height: 1.2;
+}
+
+.zakat-list {
+    margin: 0 0 8px;
+    padding-left: 18px;
+}
+
+.zakat-list li {
+    margin-bottom: 4px;
+}
+
+.kajian-divider {
+    margin: 8px auto 10px;
+    height: 1px;
+    max-width: 520px;
+    background: linear-gradient(90deg, transparent, #d7e6da, transparent);
+}
+
+.kajian-section {
+    margin-top: 6px;
+}
+
+.kajian-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1e7e34;
+    letter-spacing: 0.6px;
+}
+
+.kajian-subtitle {
+    margin-top: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #155d28;
+}
+
+.kajian-note {
+    margin-top: 2px;
+    font-size: 0.95rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.kajian-header {
+    text-align: left;
+    margin-bottom: 4px;
+}
+
+.kajian-title {
+    text-align: center;
+}
+
+.kajian-note-line {
+    margin: 4px auto 2px;
+    width: 140px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(30, 126, 52, 0.25), transparent);
+}
+
+.kajian-card {
+    margin-top: 6px;
+    padding: 14px 16px;
+    background: #f8fbf9;
+    border: 1px solid #e1ede4;
+    border-radius: 10px;
+}
+
+.kajian-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    padding: 6px 0;
+    align-items: start;
+}
+
+.kajian-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #5f6c62;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.kajian-value {
+    font-size: 1.05rem;
+    color: #1f2937;
+}
+
+.kajian-speakers {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.kajian-speakers li {
+    margin-bottom: 4px;
+}
+
+.kajian-separator {
+    margin: 8px auto;
+    max-width: 420px;
+    height: 1px;
+    background: #e5eee8;
+}
+
+@media (max-width: 576px) {
+    .agenda-maintenance .card-body {
+        padding-top: 6px !important;
+        padding-bottom: 12px !important;
+    }
+
+    .kajian-card {
+        padding: 12px 14px;
+    }
+
+    .kajian-row {
+        grid-template-columns: 110px 1fr;
+        gap: 10px;
+    }
+
+    .kajian-label {
+        font-size: 0.92rem;
+    }
+
+    .kajian-value {
+        font-size: 0.98rem;
+    }
+}
+
+.ramadhan-banner {
+    font-family: "Amiri", "Georgia", serif;
+    letter-spacing: 0.2px;
+}
+
+@media (max-width: 768px) {
+    .agenda-header-title {
+        font-size: 1.15rem;
+    }
+
+    .agenda-header-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .agenda-value {
+        font-size: 0.95rem;
+    }
+
+    .agenda-label {
+        font-size: 0.8rem;
+    }
+}
+
+
+.holiday-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #f39c12;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.25);
+}
+
+.holiday-panel {
+    background: #f8fafb;
+    border: 1.5px solid #d2dbe5;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.holiday-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e7e34;
+    margin-bottom: 10px;
+}
+
+.holiday-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.holiday-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.holiday-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e7e34;
+}
+
+.holiday-name {
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+.holiday-empty {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* ===============================
+   SMALL UTILITIES
+================================= */
+
+.small-text {
+    font-size: 0.8rem;
+}
+
+.text-muted {
+    font-size: 0.85rem;
+}
+
+/* ===============================
+   ADMIN LOGIN
+================================= */
+
+.input-soft::placeholder {
+    color: #9aa3ad;
+}
+
+.input-compact {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+}
+
+.btn-admin {
+    background: #0b2f6b;
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 600;
+}
+
+.btn-admin:hover {
+    background: #092a5f;
+    color: #fff;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px 6px;
+    color: #8a94a0;
+    text-decoration: none;
+}
+
+.password-toggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.password-toggle.is-active {
+    color: #0b2f6b;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+================================= */
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    h2 {
+        font-size: 1.3rem !important;
+    }
+
+    h3 {
+        font-size: 1.1rem !important;
+    }
+
+    p {
+        font-size: 0.9rem !important;
+    }
+
+    .card-body {
+        padding: 18px !important;
+    }
+
+    .card-title {
+        font-size: 1.1rem !important;
+    }
+
+    .card-text {
+        font-size: 0.9rem !important;
+    }
+
+    .btn {
+        font-size: 0.85rem !important;
+        padding: 7px 14px !important;
+    }
+
+    .btn-admin {
+        padding: 12px 18px !important;
+    }
+
+    .navbar-brand {
+        font-size: 0.9rem !important;
+        line-height: 1.2;
+    }
+
+    .brand-title {
+        white-space: nowrap;
+    }
+
+    .navbar .nav-link {
+        font-size: 0.95rem !important;
+        padding: 6px 0 !important;
+    }
+
+    .brand-icon {
+        font-size: 1rem !important;
+    }
+
+    .navbar {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    footer {
+        text-align: center;
+    }
+
+    .footer-wrapper {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+
+    .footer-title {
+        font-size: 0.85rem !important;
+    }
+
+    .footer-text {
+        font-size: 0.7rem !important;
+        line-height: 1.4;
+    }
+
+    .footer-copy {
+        font-size: 0.65rem !important;
+    }
+
+    .calendar-header {
+        font-size: 0.72rem;
+        letter-spacing: -0.2px;
+        white-space: nowrap;
+    }
+
+    .calendar-header,
+    .calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-cell {
+        padding: 8px 6px;
+        min-height: 56px;
+    }
+
+    .holiday-dot {
+        top: auto;
+        right: 50%;
+        bottom: 6px;
+        width: 6px;
+        height: 6px;
+        transform: translateX(50%);
+    }
+
+    .greg-day {
+        font-size: 1.05rem;
+    }
+
+    .hijri-day {
+        font-size: 0.85rem;
+    }
+}
