@@ -10,6 +10,7 @@ use App\Http\Controllers\OnlinePresenceController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/health', fn () => response('OK', 200));
 Route::view('/beranda', 'frontend.beranda');
 Route::get("/khotib-jum'at", [HomeController::class, 'agenda'])->name('khotib.jumat');
 Route::redirect('/agenda', "/khotib-jum'at");
