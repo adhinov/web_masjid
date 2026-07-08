@@ -27,7 +27,7 @@ class HomeController extends Controller
         $cacheKey = 'jadwal_sholat_' . $today;
         $fallbackKey = 'jadwal_sholat_last_good';
         $cacheTtl = $todayCarbon->copy()->addDay()->startOfDay()->diffInSeconds($todayCarbon);
-        $response = Cache::get($cacheKey);
+        $response = $this->cacheGet($cacheKey);
 
         if (!is_array($response)) {
             try {
@@ -49,8 +49,8 @@ class HomeController extends Controller
                 }
 
                 if (is_array($response)) {
-                    Cache::put($cacheKey, $response, $cacheTtl);
-                    Cache::put($fallbackKey, [
+                    $this->cachePut($cacheKey, $response, $cacheTtl);
+                    $this->cachePut($fallbackKey, [
                         'date' => $todayCarbon->format('Y-m-d'),
                         'payload' => $response,
                     ], 86400 * 7);
@@ -61,7 +61,7 @@ class HomeController extends Controller
         }
 
         if (!is_array($response)) {
-            $fallback = Cache::get($fallbackKey);
+            $fallback = $this->cacheGet($fallbackKey);
             if (is_array($fallback) && ($fallback['date'] ?? null) === $todayCarbon->format('Y-m-d')) {
                 $response = $fallback['payload'] ?? null;
             }
@@ -155,7 +155,7 @@ class HomeController extends Controller
         $lastHijriMeta = null;
 
         $cacheKey = "hijri_calendar_v6_{$year}_{$month}_offset{$offsetDays}";
-        $cached = Cache::get($cacheKey);
+        $cached = $this->cacheGet($cacheKey);
 
         if (is_array($cached)) {
             $hijriDays = $cached['days'] ?? [];
@@ -341,7 +341,7 @@ class HomeController extends Controller
                 }
             }
 
-            Cache::put($cacheKey, [
+            $this->cachePut($cacheKey, [
                 'days' => $hijriDays,
                 'label' => $hijriMonthLabel,
                 'range' => $hijriRangeLabel,
@@ -495,7 +495,7 @@ class HomeController extends Controller
         $cacheKey = 'jadwal_sholat_' . $dateKey;
 
         try {
-            $response = Cache::remember($cacheKey, 86400, function () use ($latitude, $longitude, $method, $dateKey) {
+            $response = $this->cacheRemember($cacheKey, 86400, function () use ($latitude, $longitude, $method, $dateKey) {
                 $url = "https://api.aladhan.com/v1/timings/{$dateKey}";
 
                 $api = Http::timeout(10)
@@ -544,7 +544,7 @@ class HomeController extends Controller
         ];
 
         $cacheKey = 'hijri_label_' . $date->format('Y-m-d');
-        $cached = Cache::get($cacheKey);
+        $cached = $this->cacheGet($cacheKey);
         if (is_string($cached)) {
             return $cached;
         }
@@ -563,7 +563,7 @@ class HomeController extends Controller
                 $monthEn = $h['month']['en'] ?? null;
                 $month = $monthEn ? ($hijriMonthMap[$monthEn] ?? $monthEn) : null;
                 $label = $h['day'] . ' ' . $month . ' ' . $h['year'] . ' H';
-                Cache::put($cacheKey, $label, 86400);
+                $this->cachePut($cacheKey, $label, 86400);
                 return $label;
             }
         } catch (\Throwable $e) {
@@ -571,5 +571,32 @@ class HomeController extends Controller
         }
 
         return null;
+    }
+
+    private function cacheGet(string $key, mixed $default = null): mixed
+    {
+        try {
+            return Cache::store('file')->get($key, $default);
+        } catch (\Throwable $e) {
+            return $default;
+        }
+    }
+
+    private function cachePut(string $key, mixed $value, int $seconds): void
+    {
+        try {
+            Cache::store('file')->put($key, $value, $seconds);
+        } catch (\Throwable $e) {
+            // Ignore cache write failures so public pages keep rendering.
+        }
+    }
+
+    private function cacheRemember(string $key, int $seconds, callable $callback): mixed
+    {
+        try {
+            return Cache::store('file')->remember($key, $seconds, $callback);
+        } catch (\Throwable $e) {
+            return $callback();
+        }
     }
 }

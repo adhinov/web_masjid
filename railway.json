@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "php -S 0.0.0.0:$PORT -t public",
+    "startCommand": "php artisan migrate --force && php -S 0.0.0.0:$PORT -t public",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 300
   }
